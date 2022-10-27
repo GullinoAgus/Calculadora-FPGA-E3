@@ -3,3 +3,4 @@ SConstruct
 *.asc
 *.bin
 .*.dblite
+*.out
