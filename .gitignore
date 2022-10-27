@@ -4,3 +4,4 @@ SConstruct
 *.bin
 .*.dblite
 *.out
+*.vcd
