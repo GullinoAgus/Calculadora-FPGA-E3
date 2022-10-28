@@ -1,12 +1,15 @@
 
 module ALU(num1, num2, op, res, isValid);
 
+output wire res[0:15]; //Resultado
+output wire isValid; //Indica cuando es valido el resultado
+
 input wire num1[0:15]; //Num 1 BCD
 input wire num2[0:15]; //Num 2 BCD
 input wire op;          //Operando
-output wire res[0:15]; //Resultado
-wire num1Bin;
-wire num2Bin;
+
+wire num1Bin[0:13];
+wire num2Bin[0:13];
 
 integer i;
 
