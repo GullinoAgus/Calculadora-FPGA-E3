@@ -1,7 +1,7 @@
 
 module ALU(
     input[15:0] num1, num2,     //Num 1 and 2 BCD
-    input[2:0] op,              //Operand
+    input[3:0] op,              //Operand
     input clk,             
     output reg [15:0] res       //Output BCD result
 );
@@ -15,11 +15,10 @@ assign num2Bin = fromBCDtoBin(num2);
 always @ (posedge clk)
     begin
         case (op)
-            3'b000: binResult = num1Bin + num2Bin;
-            3'b001: binResult = num1Bin - num2Bin;
-            3'b010: binResult = num1Bin * num2Bin;
-            3'b011: binResult = num1Bin / num2Bin;
-            3'b100: binResult = num1Bin ** num2Bin;
+            4'b1100: binResult = num1Bin + num2Bin;
+            4'b1101: binResult = num1Bin - num2Bin;
+            4'b1110: binResult = num1Bin * num2Bin;
+            4'b1111: binResult = num1Bin / num2Bin;
         endcase
 
         res = 0;
