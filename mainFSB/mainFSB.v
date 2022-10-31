@@ -11,7 +11,6 @@ module mainFSB(
     input wire clk
 
 );
-    reg Labura = 0;
     reg [3:0]operation = 4'b0000;
     reg [15:0]num1 = 16'b000000000000;
     reg [15:0]num2 = 16'b000000000000;
@@ -45,7 +44,7 @@ module mainFSB(
                 case (currKey)
                     1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
                         num1 = 0;
-                        num2 <= 0;
+                        num2 = 0;
                         num1 <= {num1, currKey};
                         curr_state = wait4num1;
                     end

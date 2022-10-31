@@ -5,9 +5,8 @@ module mainFSB_tb();
 
     reg clk = 0;
     reg kbEN = 0;
-    reg [15:0]res;
+    wire [15:0]res;
     reg [3:0]pressedkey = 0;
-
     wire [15:0]ALUNum1;
     wire [15:0]ALUNum2;
     wire [3:0]ALUOp;
@@ -20,8 +19,7 @@ module mainFSB_tb();
     parameter minus = 4'b1101;
     parameter mult = 4'b1110;
     parameter div = 4'b1111;
-    // ALU uut(.num1(num1), .num2(num2), .op(op), .res(res), .isValid(isValid));
-    
+    ALU uut(.num1(ALUNum1), .num2(ALUNum2), .op(ALUOp), .res(res), .clk(clk));
     mainFSB tb(.clk(clk), .kbEN(kbEN), .pressedkey(pressedkey), .ALUNum1(ALUNum1), .ALUNum2(ALUNum2), .ALUOp(ALUOp), .ALUres(res), .Display(Display));
 
     always #1 clk = ~clk;
@@ -56,10 +54,94 @@ module mainFSB_tb();
             #5
             kbEN = 0;
 
-
-            #5 //20 seg delay
-
-
+            #15 //20 seg delay
+            #5
+            pressedkey = 1;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = minus;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = 1;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = equal;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #15
+            #5
+            pressedkey = 1;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = 2;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = plus;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = 1;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = equal;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #15
+            #5
+            pressedkey = 1;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = 2;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = div;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = 2;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = equal;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #15
             $finish;       // Finish simulation  
         end  
 endmodule
