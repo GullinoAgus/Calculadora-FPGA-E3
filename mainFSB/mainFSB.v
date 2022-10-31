@@ -2,23 +2,31 @@
 module mainFSB(
     
     input wire kbEN,
-    input wire pressedkey[0:4],
-    input wire ALUres[0:15],
-    output wire ALUNum1[0:15],
-    output wire ALUNum2[0:15],
-    output wire ALUOp[0:15],
-    output wire Display[0:15],
+    input wire [3:0]pressedkey,
+    input wire [15:0]ALUres,
+    output wire [15:0]ALUNum1,
+    output wire [15:0]ALUNum2,
+    output wire [3:0]ALUOp,
+    output wire ALUclk,
+    output wire [15:0]Display,
     input wire clk
 
 );
-    reg operation[0:3] = 4'b0000;
-    reg num1[0:15] = 16'b000000000000;
-    reg num2[0:15] = 16'b000000000000;
-    reg res[0:15] = 16'b000000000000;
-    reg currKey[0:3] = 4'b0000;
+    reg Labura = 0;
+    reg [3:0]operation = 4'b0000;
+    reg [15:0]num1 = 16'b000000000000;
+    reg [15:0]num2 = 16'b000000000000;
+    reg [15:0]res = 16'b000000000000;
+    reg [3:0]currKey = 4'b0000;
+    reg [15:0]info2display;
 
-    reg curr_state[0:2];
-    reg fut_state[0:2];
+    reg [2:0]curr_state = wait4num1;
+
+    assign Display = info2display;
+    assign ALUNum1 = num1;
+    assign ALUNum2 = num2;
+    assign ALUOp = operation;
+    assign ALUclk = clk;
 
     parameter wait4num1 = 3'b000;
     parameter wait4num2 = 3'b001;
@@ -33,19 +41,52 @@ module mainFSB(
     parameter div = 4'b1111;
 
     always @(negedge kbEN) begin
-        currKey = kbEN;
+        currKey = pressedkey;
         case (curr_state)
-            wait4equal: 
-                if (currKey == equal) begin
-                    curr_state <= showRes;
-                    Display <= res; 
-                end
-            wait4num2:
+            showRes: begin
+                info2display = ALUres;
                 case (currKey)
-                    : 
-                    default: 
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
+                        num1 = 0;
+                        num2 <= 0;
+                        num1 <= {num1, currKey};
+                        curr_state = wait4num1;
+                    end
                 endcase
-            default: 
+            end
+            wait4num2: begin
+                info2display = num2;
+                case (currKey)
+                    equal: begin
+                        curr_state <= showRes;                        
+                        end
+                    AC: begin
+                        if (!num2) begin
+                            num2 <= 0;
+                            num1 <= 0;
+                        end
+                        num2 <= 0;
+                        end
+                        
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
+                        num2 <= {num2, currKey};
+                    
+                endcase
+            end
+            wait4num1:begin
+                info2display = num1;
+                case (currKey)
+                    plus, minus, div, mult: begin
+                        operation <= currKey;
+                        curr_state = wait4num2;
+                    end
+                    AC:
+                        num1 <= 0;
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
+                        num1 <= {num1, currKey};
+                    
+                endcase
+            end
         endcase
     end
 
