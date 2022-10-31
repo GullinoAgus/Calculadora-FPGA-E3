@@ -4,8 +4,8 @@
 # To verbose make all QUIET=
 LIB_SRC = ALU/ALU.v ./mainFSB/mainFSB.v ./keyboardCtrl/keyboardCtrl.v DisplayCtrl/bcd_2seg.v DisplayCtrl/fsm_bin_to_bcd.v ./DisplayCtrl/DisplayCtrl.v keyboardCtrl/keybToBCD.v
 SOURCES = top.v $(LIB_SRC)
-TBNAME = aver
-SOURCES_TB = DisplayCtrl/7segment_tb.v $(LIB_SRC)
+TBNAME = mainFSB_tb
+SOURCES_TB = mainFSB/mainFSB_tb.v $(LIB_SRC)
 PCF = upduino.pcf
 #QUIET = -q
 

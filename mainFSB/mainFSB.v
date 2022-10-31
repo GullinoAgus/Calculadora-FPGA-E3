@@ -7,7 +7,6 @@ module mainFSB(
     output wire [15:0]ALUNum1,
     output wire [15:0]ALUNum2,
     output wire [3:0]ALUOp,
-    output wire ALUclk,
     output wire [15:0]Display,
     input wire clk
 
@@ -26,7 +25,6 @@ module mainFSB(
     assign ALUNum1 = num1;
     assign ALUNum2 = num2;
     assign ALUOp = operation;
-    assign ALUclk = clk;
 
     parameter wait4num1 = 3'b000;
     parameter wait4num2 = 3'b001;
@@ -44,7 +42,6 @@ module mainFSB(
         currKey = pressedkey;
         case (curr_state)
             showRes: begin
-                info2display = ALUres;
                 case (currKey)
                     1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
                         num1 = 0;
@@ -55,26 +52,25 @@ module mainFSB(
                 endcase
             end
             wait4num2: begin
-                info2display = num2;
                 case (currKey)
                     equal: begin
-                        curr_state <= showRes;                        
+                        curr_state = showRes;                        
                         end
                     AC: begin
                         if (!num2) begin
-                            num2 <= 0;
-                            num1 <= 0;
+                            num2 = 0;
+                            num1 = 0;
                         end
-                        num2 <= 0;
+                        num2 = 0;
                         end
                         
                     1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
-                        num2 <= {num2, currKey};
+                        num2 = {num2, currKey};
                     
                 endcase
+                
             end
             wait4num1:begin
-                info2display = num1;
                 case (currKey)
                     plus, minus, div, mult: begin
                         operation <= currKey;
@@ -83,11 +79,21 @@ module mainFSB(
                     AC:
                         num1 <= 0;
                     1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
-                        num1 <= {num1, currKey};
+                        num1 = {num1, currKey};
                     
                 endcase
             end
         endcase
     end
 
+    always @(posedge clk) begin
+        case (curr_state)
+            wait4num1:
+                info2display = num1;
+            wait4num2:
+                info2display = num2;
+            showRes:
+                info2display = ALUres;
+        endcase
+    end
 endmodule

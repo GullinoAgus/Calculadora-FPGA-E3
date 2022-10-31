@@ -1,32 +1,63 @@
-`timescale 1ns / 10 ps
+`timescale 1ns / 1 ns
+
 
 module mainFSB_tb();
 
-    reg clk;
-    reg[0:15] num1;
-    reg[0:15] num2;
-    reg[0:1] op;
+    reg clk = 0;
+    reg kbEN = 0;
+    reg [15:0]res;
+    reg [3:0]pressedkey = 0;
 
-    wire isValid;
-    wire[0:15] res;
+    wire [15:0]ALUNum1;
+    wire [15:0]ALUNum2;
+    wire [3:0]ALUOp;
+    wire ALUclk;
+    wire [15:0]Display;
 
-    ALU uut(.num1(num1), .num2(num2), .op(op), .res(res), .isValid(isValid));
-    mainFSB tb(.clk(clk));
+    parameter equal = 4'b1010;
+    parameter AC = 4'b1011;
+    parameter plus = 4'b1100;
+    parameter minus = 4'b1101;
+    parameter mult = 4'b1110;
+    parameter div = 4'b1111;
+    // ALU uut(.num1(num1), .num2(num2), .op(op), .res(res), .isValid(isValid));
+    
+    mainFSB tb(.clk(clk), .kbEN(kbEN), .pressedkey(pressedkey), .ALUNum1(ALUNum1), .ALUNum2(ALUNum2), .ALUOp(ALUOp), .ALUres(res), .Display(Display));
 
     always #1 clk = ~clk;
 
     initial
         begin  
             // This system task will print out the signal values everytime they change   
-            $dumpfile("top_tb.vcd");
-            $dumpvars(0, top_tb);
+            $dumpfile("mainFSB_tb.vcd");
+            $dumpvars(0, mainFSB_tb);
+            #5
+            pressedkey = 1;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = plus;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = 1;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
+            #5
+            pressedkey = equal;
+            #5
+            kbEN = 1;
+            #5
+            kbEN = 0;
 
-            // Also called stimulus, we simply assign different values to the variables  
-            // after some simulation "delay"
-            num1 = 16'b101;
-            num2 = 16'b1;
-            op = 0; //Sum
-            #20 //20 seg delay
+
+            #5 //20 seg delay
 
 
             $finish;       // Finish simulation  
