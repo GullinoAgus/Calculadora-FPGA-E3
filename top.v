@@ -20,14 +20,43 @@ module top
     output  wire        gpio_26,        // Display DS4
     output  wire        gpio_2,         // Display kbEN
     output  wire        gpio_46,        // Display kbColnum0
-    output  wire        gpio_47         // Display kbColnum1
+    output  wire        gpio_47,        // Display kbColnum1
+    output  wire        gpio_45,        // Display kbRow0
+    output  wire        gpio_48,        // Display kbRow1
+    output  wire        gpio_3         // Reset
 );
 
     wire         [15:0]num1;
     wire         [15:0]num2;
     wire         [3:0]op;
-    wire         int_osc;
-    reg [27:0]  frequency_counter_i;
+    wire         [15:0]res;
+    wire         clk;
+    wire         kbEN = gpio_2;
+    wire         [1:0]kbcol;
+    wire         [1:0]kbrow;
+    wire         [3:0]pressedKey;
+    wire         reset = gpio_45;
+    wire         [15:0]display;
+    wire         [7:0]displaysticks;
+    wire         [3:0]diplayselect;
+    wire         readKey;
+
+    assign displaysticks[0] = gpio_28;
+    assign displaysticks[1] = gpio_38;
+    assign displaysticks[2] = gpio_42;
+    assign displaysticks[3] = gpio_36;
+    assign displaysticks[4] = gpio_43;
+    assign displaysticks[5] = gpio_34;
+    assign displaysticks[6] = gpio_37;
+    assign displaysticks[7] = gpio_31;
+    assign diplayselect[0] = gpio_35;
+    assign diplayselect[0] = gpio_32;
+    assign diplayselect[0] = gpio_27;
+    assign diplayselect[0] = gpio_26;
+    assign kbcol[0] = gpio_46;
+    assign kbcol[1] = gpio_47;
+    assign kbrow[0] = gpio_45;
+    assign kbrow[1] = gpio_48;
 
 //----------------------------------------------------------------------------
 //                                                                          --
@@ -39,30 +68,46 @@ module top
 
 //----------------------------------------------------------------------------
 //                                                                          --
-//                       Counter                                            --
+//                       Module Instantiation                               --
 //                                                                          --
 //----------------------------------------------------------------------------
-    always @(posedge int_osc) begin
-	    frequency_counter_i <= frequency_counter_i + 1'b1;
-    end
+mainFSB fsb(.kbEN(readKey),
+    .pressedkey(pressedKey),
+    .ALUres(res),
+    .ALUNum1(num1),
+    .ALUNum2(num2),
+    .ALUOp(op),
+    .Display(display),
+    .clk(clk));
+keyboardCtrl kbctrl(.CLK(clk),
+                    .Q0(kbcol[0]), 
+                    .Q1(kbcol[1]), 
+                    .KeyPressed(kbEN), 
+                    .EnableKeyb(1), 
+                    .D0(kbrow[0]), 
+                    .D1(kbrow[1]), 
+                    .RESET(reset), 
+                    .BCDKey(pressedKey), 
+                    .KeyRead(readKey));
 
-//----------------------------------------------------------------------------
-//                                                                          --
-//                       Instantiate RGB primitive                          --
-//                                                                          --
-//----------------------------------------------------------------------------
-    SB_RGBA_DRV RGB_DRIVER (
-      .RGBLEDEN (1'b1),
-      .RGB0PWM  (frequency_counter_i[25]&frequency_counter_i[24]),
-      .RGB1PWM  (frequency_counter_i[25]&~frequency_counter_i[24]),
-      .RGB2PWM  (~frequency_counter_i[25]&frequency_counter_i[24]),
-      .CURREN   (1'b1),
-      .RGB0     (led_green),		//Actual Hardware connection
-      .RGB1     (led_blue),
-      .RGB2     (led_red)
-    );
-    defparam RGB_DRIVER.RGB0_CURRENT = "0b000001";
-    defparam RGB_DRIVER.RGB1_CURRENT = "0b000001";
-    defparam RGB_DRIVER.RGB2_CURRENT = "0b000001";
+wire [3:0]digit;
+wire [3:0]digit_pwr;
+fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) , 
+								.resetn(~reset),
+								.en(1) ,
+								.in_4bcd(display) ,
+								.out_bcd(digit) ,
+								.out_shr(digit_pwr) ); 		
+
+		// instantce bcd2seg				
+bcd_2seg uut_bcd2seg (
+				.in_bcd(digit),
+			 	.seg(displaysticks));		
+ALU u_alu(    
+    .num1(num1)), .num2(num2),     //Num 1 and 2 BCD
+    .op(op),              //Operand
+    .clk(clk),             
+    .res(res)       //Output BCD result);
+
 
 endmodule
