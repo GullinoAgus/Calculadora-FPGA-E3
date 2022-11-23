@@ -27,13 +27,14 @@ module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, 
     SIGNAL4 = 3'b111;
 
     reg [0:2] present_state = POLL1;
-    always@(posedge CLK)    //State register movement
+    always@(posedge CLK, posedge RESET)    //State register movement
         begin
-            state = state + 1;
             if (RESET == 1)begin
                 present_state = POLL1;
+                state = state + 1;
             end
             else begin
+                
                 case(present_state)
                     POLL1:          if(KeyPressed == 0)        present_state <= POLL2;
                                     else                present_state <= SIGNAL1;

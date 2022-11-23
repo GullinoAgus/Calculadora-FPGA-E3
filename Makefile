@@ -18,7 +18,7 @@ ifeq ($(uname_S), Darwin)
 	APIOPKGFOLDER = $${HOME}/.apio
 endif
 
-LIB_SRC = ALU/ALU.v ./mainFSB/mainFSB.v DisplayCtrl/bcd_2seg.v DisplayCtrl/fsm_bin_to_bcd.v ./DisplayCtrl/DisplayCtrl.v# ./keyboardCtrl/keyboardCtrl.v keyboardCtrl/keybToBCD.v
+LIB_SRC = ALU/ALU.v ./mainFSB/mainFSB.v DisplayCtrl/bcd_2seg.v DisplayCtrl/fsm_bin_to_bcd.v ./DisplayCtrl/DisplayCtrl.v ./keyboardCtrl/keyboardCtrl.v keyboardCtrl/keybToBCD.v
 SOURCES = top.v $(LIB_SRC)
 TBNAME = mainFSB_tb
 MODULE_TO_DRAW = ./mainFSB/mainFSB.v
