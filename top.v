@@ -100,7 +100,7 @@ keyboardCtrl kbctrl(.CLK(clk),
                     .RESET(reset), 
                     .BCDKey(pressedKey), 
                     .KeyRead(readKey),
-                    .state({gpio_9, gpio_11, gpio_18}));
+                    .state({gpio_9, gpio_11}));
 
 wire [3:0]digit;
 wire [3:0]digit_pwr;

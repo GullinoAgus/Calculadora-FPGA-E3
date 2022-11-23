@@ -21,7 +21,7 @@ endif
 LIB_SRC = ALU/ALU.v ./mainFSB/mainFSB.v DisplayCtrl/bcd_2seg.v DisplayCtrl/fsm_bin_to_bcd.v ./DisplayCtrl/DisplayCtrl.v ./keyboardCtrl/keyboardCtrl.v keyboardCtrl/keybToBCD.v
 SOURCES = top.v $(LIB_SRC)
 TBNAME = mainFSB_tb
-MODULE_TO_DRAW = ./mainFSB/mainFSB.v
+MODULE_TO_DRAW = ./keyboardCtrl/keyboardCtrl.v keyboardCtrl/keybToBCD.v
 SOURCES_TB = mainFSB/mainFSB_tb.v $(LIB_SRC)
 PCF = upduino.pcf
 #QUIET = -q

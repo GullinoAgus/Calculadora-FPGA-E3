@@ -55,3 +55,34 @@ module keybToBCD (D0,D1,Q0,Q1,BCDKey,CLK);
 	    end
 	end
 endmodule
+module Deco_138 ( A, Y);
+
+    input wire [1:0] A;
+    output reg [3:0] Y;
+    
+    always @ (A)
+        begin
+            case (A)
+                    0: Y= 4'bzzz1;
+                    1: Y= 4'bzz1z;
+                    2: Y= 4'bz1zz;
+                    3: Y= 4'b1zzz;
+                    default: Y= 4'bzzzz;
+            endcase
+        end
+endmodule 
+module Encoder(I, A);
+    
+    input wire [3:0] I;
+    output reg [1:0] A;
+    integer j;
+    
+    always @ (I)
+        begin       
+            for(j=0;j<=3;j=j+1)
+                if(I[j]==1)
+                    begin
+                        A=j;
+                    end
+        end
+endmodule 
