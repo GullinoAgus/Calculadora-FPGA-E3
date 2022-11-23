@@ -82,14 +82,14 @@ module top
 //                       Module Instantiation                               --
 //                                                                          --
 //----------------------------------------------------------------------------
-mainFSB fsb(.kbEN(readKey),
-    .pressedkey(pressedKey),
-    .ALUres(res),
-    .ALUNum1(num1),
-    .ALUNum2(num2),
-    .ALUOp(op),
-    .Display(display),
-    .clk(clk));
+// mainFSB fsb(.kbEN(readKey),
+//     .pressedkey(pressedKey),
+//     .ALUres(res),
+//     .ALUNum1(num1),
+//     .ALUNum2(num2),
+//     .ALUOp(op),
+//     .Display(display),
+//     .clk(clk));
 keyboardCtrl kbctrl(.CLK(clk),
                     .keyboardfil(kbrow), 
                     .EnableKeyb(supply), 
@@ -100,22 +100,22 @@ keyboardCtrl kbctrl(.CLK(clk),
 
 wire [3:0]digit;
 wire [3:0]digit_pwr;
-fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) , 
-								.resetn(~reset),
-								.en(1) ,
-								.in_4bcd(display) ,
-								.out_bcd(digit) ,
-								.out_shr(digit_pwr) ); 		
+// fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) , 
+// 								.resetn(~reset),
+// 								.en(1) ,
+// 								.in_4bcd(display) ,
+// 								.out_bcd(digit) ,
+// 								.out_shr(digit_pwr) ); 		
 
 		// instantce bcd2seg				
-bcd_2seg uut_bcd2seg (
-				.in_bcd(digit),
-			 	.seg(displaysticks));		
-ALU u_alu(    
-    .num1(num1), .num2(num2),     //Num 1 and 2 BCD
-    .op(op),              //Operand
-    .clk(clk),             
-    .res(res));       //Output BCD result);
+// bcd_2seg uut_bcd2seg (
+// 				.in_bcd(digit),
+// 			 	.seg(displaysticks));		
+// ALU u_alu(    
+//     .num1(num1), .num2(num2),     //Num 1 and 2 BCD
+//     .op(op),              //Operand
+//     .clk(clk),             
+//     .res(res));       //Output BCD result);
 
 
 endmodule

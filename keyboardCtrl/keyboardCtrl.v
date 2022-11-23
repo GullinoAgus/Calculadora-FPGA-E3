@@ -56,39 +56,6 @@ module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, 
     assign KeyRead = present_state[0];
     assign D0 = present_state[1];
     assign D1 = present_state[2];
-    // always@(present_state)  //Output Logic
-    //     begin
-    //         case(present_state)
-	//             POLL1:  
-	// 			begin
-	// 				D0 = 0; D1 = 0; KeyRead = 0;
-	// 			end
-	//             SIGNAL1:
-	// 			begin
-	// 				D0 = 0; D1 = 0; KeyRead = 1;
-	// 			end
-	//             POLL2:
-	// 			begin
-	// 				D0 = 0; D1 = 1; KeyRead = 0;
-	// 			end
-	//             SIGNAL2:
-	// 			begin
-	// 				D0 = 0; D1 = 1; KeyRead = 1; 
-	// 			end
-	//             SIGNAL3:
-	// 			begin
-	// 				D0 = 1; D1 = 0; KeyRead = 1;
-	// 			end
-	//             POLL4: 
-	// 			begin
-	// 				D0 = 1; D1 = 1; KeyRead = 0; 
-	// 			end
-	//             SIGNAL4:
-	// 			begin
-	// 				D0 = 1; D1 = 1; KeyRead = 1;
-	// 			end
-    //         endcase
-    //     end
 	
 	Deco_138 decoder(.A({D0, D1}), .Y(keyboardcol));
     Encoder encoder(.I(keyboardfil), .A({Q0, Q1}), .OE(KeyPressed));
@@ -110,11 +77,11 @@ module Deco_138 ( A, Y);
     always @ (A)
         begin
             case (A)
-                    0: Y= 4'b0001;
-                    1: Y= 4'b0010;
-                    2: Y= 4'b0100;
-                    3: Y= 4'b1000;
-                    default: Y= 4'b1111;
+                    0: Y= 4'bzzz1;
+                    1: Y= 4'bzz1z;
+                    2: Y= 4'bz1zz;
+                    3: Y= 4'b1zzz;
+                    default: Y= 4'bzzzz;
             endcase
         end
 endmodule 
@@ -122,7 +89,7 @@ endmodule
     
     input wire [3:0] I;
     output reg [1:0] A;
-    output OE;
+    output wire OE;
     assign OE = |I;
     integer j;
     
