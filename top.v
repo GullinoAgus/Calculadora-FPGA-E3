@@ -18,20 +18,20 @@ module top
     output  wire        gpio_32,        // Display DS2
     output  wire        gpio_27,        // Display DS3
     output  wire        gpio_26,        // Display DS4
-    output  wire        gpio_2,         // Display kbEN
-    output  wire        gpio_46,        // Display kbColnum0
-    output  wire        gpio_47,        // Display kbColnum1
-    output  wire        gpio_45,        // Display kbRow0
-    input  wire        gpio_48,        // Display kbRow1
-    input  wire        gpio_3,        // Display kbRow1
-    input  wire        gpio_4,        // Display kbRow1
-    input  wire        gpio_44,        // Display kbRow1
+    output  wire        gpio_2,         // col0
+    output  wire        gpio_46,        // col1
+    output  wire        gpio_47,        // col2
+    output  wire        gpio_45,        // col3
+    input  wire        gpio_48,        // row0
+    input  wire        gpio_3,        // row1
+    input  wire        gpio_4,        // row2
+    input  wire        gpio_44,        // row3
     input  wire        gpio_6,         // Reset
-    output  wire        gpio_12,         // Salida de Clock
-    output  wire        gpio_9,         // Salida de Clock
-    output  wire        gpio_11,         // Salida de Clock
-    output  wire        gpio_13,         // Salida de Clock
-    output  wire        gpio_21         // Salida de Clock
+    output  wire        gpio_12,       // Test
+    output  wire        gpio_9,        // Test
+    output  wire        gpio_11,       // Test
+    output  wire        gpio_13,       // Test
+    output  wire        gpio_21        // Test
 
 );
 
@@ -72,10 +72,10 @@ module top
 
     // Test wires
     wire [0:3]test;
-    // assign test[0] = gpio_9;
-    // assign test[1] = gpio_11;
-    // assign test[2] = gpio_13;
-    // assign test[3] = gpio_21;
+    assign test[0] = gpio_9;
+    assign test[1] = gpio_11;
+    assign test[2] = gpio_13;
+    assign test[3] = gpio_21;
 
 //----------------------------------------------------------------------------
 //                                                                          --
@@ -93,7 +93,7 @@ SB_HFOSC #(
 //                       Module Instantiation                               --
 //                                                                          --
 //----------------------------------------------------------------------------
-
+assign test[3] = readKey;
 keyboardCtrl kbctrl(.CLK(clk),
                     .keyboardfil(kbrow),
                     .keyboardcol(kbcol),

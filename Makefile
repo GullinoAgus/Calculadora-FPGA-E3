@@ -49,7 +49,7 @@ hardware.json: $(SOURCES)
 	$(YOSYS) -p "synth_ice40 -dsp -json hardware.json -abc9 -device u" $(QUIET) $(SOURCES)'
 
 hardware.asc: $(PCF) hardware.json
-	$(ICE40) --up5k --package sg48 --json hardware.json --asc hardware.asc --pcf-allow-unconstrained --pcf $(PCF) --freq 72 $(QUIET)'
+	$(ICE40) --up5k --package sg48 --json hardware.json --asc hardware.asc --pcf-allow-unconstrained --pcf $(PCF) --freq 0.01 $(QUIET)'
 
 hardware.bin: hardware.asc
 	$(ICEPACK) hardware.asc hardware.bin'
