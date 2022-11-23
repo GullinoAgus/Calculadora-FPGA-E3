@@ -23,7 +23,8 @@ module top
     output  wire        gpio_47,        // Display kbColnum1
     output  wire        gpio_45,        // Display kbRow0
     output  wire        gpio_48,        // Display kbRow1
-    output  wire        gpio_3         // Reset
+    output  wire        gpio_3,         // Reset
+    output  wire        gpio_12         // Salida de Clock
 );
 
     wire         [15:0]num1;
@@ -58,13 +59,16 @@ module top
     assign kbrow[0] = gpio_45;
     assign kbrow[1] = gpio_48;
 
+    // Test wires
+    wire [0:2]statekbcontrl;
+    assign gpio_12 = statekbcontrl[1];
+    
 //----------------------------------------------------------------------------
 //                                                                          --
 //                       Internal Oscillator                                --
 //                                                                          --
 //----------------------------------------------------------------------------
-    SB_LFOSC  u_SB_LFOSC(.CLKLFPU(1), .CLKLFEN(1), .CLKLF(int_osc));
-
+    SB_LFOSC  u_SB_LFOSC(.CLKLFPU(1), .CLKLFEN(1), .CLKLF(clk));
 
 //----------------------------------------------------------------------------
 //                                                                          --
@@ -80,15 +84,16 @@ mainFSB fsb(.kbEN(readKey),
     .Display(display),
     .clk(clk));
 keyboardCtrl kbctrl(.CLK(clk),
-                    .Q0(kbcol[0]), 
-                    .Q1(kbcol[1]), 
+                    .Q0(kbrow[0]), 
+                    .Q1(kbrow[1]), 
                     .KeyPressed(kbEN), 
-                    .EnableKeyb(1), 
-                    .D0(kbrow[0]), 
-                    .D1(kbrow[1]), 
+                    .EnableKeyb(supply), 
+                    .D0(kbcol[0]), 
+                    .D1(kbcol[1]), 
                     .RESET(reset), 
                     .BCDKey(pressedKey), 
-                    .KeyRead(readKey));
+                    .KeyRead(readKey),
+                    .state(statekbcontrl));
 
 wire [3:0]digit;
 wire [3:0]digit_pwr;
@@ -104,10 +109,10 @@ bcd_2seg uut_bcd2seg (
 				.in_bcd(digit),
 			 	.seg(displaysticks));		
 ALU u_alu(    
-    .num1(num1)), .num2(num2),     //Num 1 and 2 BCD
+    .num1(num1), .num2(num2),     //Num 1 and 2 BCD
     .op(op),              //Operand
     .clk(clk),             
-    .res(res)       //Output BCD result);
+    .res(res));       //Output BCD result);
 
 
 endmodule

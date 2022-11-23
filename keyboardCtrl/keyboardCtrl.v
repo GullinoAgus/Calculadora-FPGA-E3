@@ -1,13 +1,13 @@
 
-module keyboardCtrl ( CLK, Q0, Q1, KeyPressed, EnableKeyb, D0, D1, RESET, BCDKey, KeyRead);
+module keyboardCtrl ( CLK, Q0, Q1, KeyPressed, EnableKeyb, D0, D1, RESET, BCDKey, KeyRead, test);
 
     input wire CLK, Q0, Q1, KeyPressed, RESET;  //Q0, Q1 son las columnas que se energizaron del teclado
                                                 //KeyPressed se activa cuando se presiona una tecla de la columna
-    output reg D0, D1, KeyRead;                 //D0, D1 son las filas del teclado para hacer polling
+    output wire D0, D1, KeyRead;                 //D0, D1 son las filas del teclado para hacer polling
                                                 //KeyRead indica al toplevel que se presiona una tecla
     output EnableKeyb;                          //EnableKeyb activa al teclado para funcionar
     output [0:3] BCDKey;                    //En este cable esta escrito el BCD a transportar
-
+    reg test = 1;
     //SB_LFOSC u_SB_HFOSC(.CLKLFPU(1), .CLKLFEN(1), .CLKLF(int_lfosc));   //Esto deberia instanciarlo la FSM
 
     //assign EnableKeyb = 1; //Esto deberia hacerlo el top level para activar o desactivar el teclado si lo desea
@@ -22,12 +22,12 @@ module keyboardCtrl ( CLK, Q0, Q1, KeyPressed, EnableKeyb, D0, D1, RESET, BCDKey
     SIGNAL3 = 3'b110,
     SIGNAL4 = 3'b111;
 
-    reg [0:2] present_state, next_state;
-
+    reg [0:2] present_state = POLL1, next_state;
     always@(posedge CLK)    //State register movement
         begin
             if (RESET == 1)
                 present_state = POLL1;
+                test = ~test;
             else
                 present_state = next_state;
         end
@@ -47,46 +47,49 @@ module keyboardCtrl ( CLK, Q0, Q1, KeyPressed, EnableKeyb, D0, D1, RESET, BCDKey
             SIGNAL2:        if(KeyPressed == 0)        next_state = POLL2;
             SIGNAL3:        if(KeyPressed == 0)        next_state = POLL3;
             SIGNAL4:        if(KeyPressed == 0)        next_state = POLL4;
+            default: next_state = POLL1;
             endcase
         end
-    
-    always@(present_state)  //Output Logic
-        begin
-            case(present_state)
-	            POLL1:  
-				begin
-					D0 = 0; D1 = 0; KeyRead = 0;
-				end
-	            SIGNAL1:
-				begin
-					D0 = 0; D1 = 0; KeyRead = 1;
-				end
-	            POLL2:
-				begin
-					D0 = 0; D1 = 1; KeyRead = 0;
-				end
-	            SIGNAL2:
-				begin
-					D0 = 0; D1 = 1; KeyRead = 1; 
-				end
-	            POLL3: 
-				begin
-					D0 = 1; D1 = 0; KeyRead = 0;
-				end
-	            SIGNAL3:
-				begin
-					D0 = 1; D1 = 0; KeyRead = 1;
-				end
-	            POLL4: 
-				begin
-					D0 = 1; D1 = 1; KeyRead = 0; 
-				end
-	            SIGNAL4:
-				begin
-					D0 = 1; D1 = 1; KeyRead = 1;
-				end
-            endcase
-        end
+    assign KeyRead = present_state[0];
+    assign D0 = present_state[1];
+    assign D1 = present_state[2];
+    // always@(present_state)  //Output Logic
+    //     begin
+    //         case(present_state)
+	//             POLL1:  
+	// 			begin
+	// 				D0 = 0; D1 = 0; KeyRead = 0;
+	// 			end
+	//             SIGNAL1:
+	// 			begin
+	// 				D0 = 0; D1 = 0; KeyRead = 1;
+	// 			end
+	//             POLL2:
+	// 			begin
+	// 				D0 = 0; D1 = 1; KeyRead = 0;
+	// 			end
+	//             SIGNAL2:
+	// 			begin
+	// 				D0 = 0; D1 = 1; KeyRead = 1; 
+	// 			end
+	//             POLL3: 
+	// 			begin
+	// 				D0 = 1; D1 = 0; KeyRead = 0;
+	// 			end
+	//             SIGNAL3:
+	// 			begin
+	// 				D0 = 1; D1 = 0; KeyRead = 1;
+	// 			end
+	//             POLL4: 
+	// 			begin
+	// 				D0 = 1; D1 = 1; KeyRead = 0; 
+	// 			end
+	//             SIGNAL4:
+	// 			begin
+	// 				D0 = 1; D1 = 1; KeyRead = 1;
+	// 			end
+    //         endcase
+    //     end
 	
 		
     keybToBCD keybToBCDTransformation (
