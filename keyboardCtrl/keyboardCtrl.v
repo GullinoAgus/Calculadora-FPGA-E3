@@ -1,9 +1,9 @@
 
-module keyboardCtrl ( CLK, keyboardfil, KeyPressed, EnableKeyb, keyboardcol, RESET, BCDKey, KeyRead);
+module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, KeyRead);
 
-    input wire CLK, KeyPressed, RESET;  //Q0, Q1 son las columnas que se energizaron del teclado
+    input wire CLK, RESET;  //Q0, Q1 son las columnas que se energizaron del teclado
                                                 //KeyPressed se activa cuando se presiona una tecla de la columna
-    wire D0, D1, Q0, Q1;
+    wire D0, D1, Q0, Q1, KeyPressed;
     output wire KeyRead;                 //D0, D1 son las filas del teclado para hacer polling
                                                 //KeyRead indica al toplevel que se presiona una tecla
     output EnableKeyb;                          //EnableKeyb activa al teclado para funcionar
@@ -13,6 +13,7 @@ module keyboardCtrl ( CLK, keyboardfil, KeyPressed, EnableKeyb, keyboardcol, RES
     //assign EnableKeyb = 1; //Esto deberia hacerlo el top level para activar o desactivar el teclado si lo desea
     output reg [3:0]keyboardcol;
     input wire [3:0]keyboardfil;
+
     localparam [0:2]
     POLL1 = 3'b000,
     POLL2 = 3'b001,
@@ -90,7 +91,7 @@ module keyboardCtrl ( CLK, keyboardfil, KeyPressed, EnableKeyb, keyboardcol, RES
     //     end
 	
 	Deco_138 decoder(.A({D0, D1}), .Y(keyboardcol));
-    Encoder encoder(.I(keyboardfil), .A({Q0, Q1}));
+    Encoder encoder(.I(keyboardfil), .A({Q0, Q1}), .OE(KeyPressed));
     keybToBCD keybToBCDTransformation (
         .D0(D0),
         .D1(D1),
@@ -117,10 +118,12 @@ module Deco_138 ( A, Y);
             endcase
         end
 endmodule 
- module Encoder(I, A);
+ module Encoder(I, A, OE);
     
     input wire [3:0] I;
     output reg [1:0] A;
+    output OE;
+    assign OE = |I;
     integer j;
     
     always @ (I)

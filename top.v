@@ -36,9 +36,8 @@ module top
     wire         [3:0]op;
     wire         [15:0]res;
     wire         clk;
-    wire         kbEN = gpio_2;
-    wire         [1:0]kbcol;
-    wire         [1:0]kbrow;
+    wire         [3:0]kbcol;
+    wire         [3:0]kbrow;
     wire         [3:0]pressedKey;
     wire         reset = gpio_5;
     wire         [15:0]display;
@@ -58,10 +57,14 @@ module top
     assign diplayselect[0] = gpio_32;
     assign diplayselect[0] = gpio_27;
     assign diplayselect[0] = gpio_26;
-    assign kbcol[0] = gpio_46;
-    assign kbcol[1] = gpio_47;
-    assign kbrow[0] = gpio_45;
-    assign kbrow[1] = gpio_48;
+    assign kbcol[0] = gpio_2;
+    assign kbcol[1] = gpio_46;
+    assign kbcol[2] = gpio_47;
+    assign kbcol[3] = gpio_45;
+    assign kbrow[0] = gpio_48;
+    assign kbrow[1] = gpio_3;
+    assign kbrow[2] = gpio_4;
+    assign kbrow[3] = gpio_44;
 
     // Test wires
     wire test;
@@ -88,12 +91,9 @@ mainFSB fsb(.kbEN(readKey),
     .Display(display),
     .clk(clk));
 keyboardCtrl kbctrl(.CLK(clk),
-                    .Q0(kbrow[0]), 
-                    .Q1(kbrow[1]), 
-                    .KeyPressed(kbEN), 
+                    .keyboardfil(kbrow), 
                     .EnableKeyb(supply), 
-                    .D0(kbcol[0]), 
-                    .D1(kbcol[1]), 
+                    .keyboardcol(kbcol), 
                     .RESET(reset), 
                     .BCDKey(pressedKey), 
                     .KeyRead(readKey));
