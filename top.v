@@ -22,8 +22,12 @@ module top
     output  wire        gpio_46,        // Display kbColnum0
     output  wire        gpio_47,        // Display kbColnum1
     output  wire        gpio_45,        // Display kbRow0
-    output  wire        gpio_48,        // Display kbRow1
-    output  wire        gpio_3,         // Reset
+    input  wire        gpio_48,        // Display kbRow1
+    input  wire        gpio_3,        // Display kbRow1
+    input  wire        gpio_4,        // Display kbRow1
+    input  wire        gpio_44,        // Display kbRow1
+
+    input  wire        gpio_5,         // Reset
     output  wire        gpio_12         // Salida de Clock
 );
 
@@ -36,7 +40,7 @@ module top
     wire         [1:0]kbcol;
     wire         [1:0]kbrow;
     wire         [3:0]pressedKey;
-    wire         reset = gpio_45;
+    wire         reset = gpio_5;
     wire         [15:0]display;
     wire         [7:0]displaysticks;
     wire         [3:0]diplayselect;
@@ -60,9 +64,9 @@ module top
     assign kbrow[1] = gpio_48;
 
     // Test wires
-    wire [0:2]statekbcontrl;
-    assign gpio_12 = statekbcontrl[1];
-    
+    wire test;
+    assign gpio_12 = test;
+
 //----------------------------------------------------------------------------
 //                                                                          --
 //                       Internal Oscillator                                --
@@ -92,8 +96,7 @@ keyboardCtrl kbctrl(.CLK(clk),
                     .D1(kbcol[1]), 
                     .RESET(reset), 
                     .BCDKey(pressedKey), 
-                    .KeyRead(readKey),
-                    .state(statekbcontrl));
+                    .KeyRead(readKey));
 
 wire [3:0]digit;
 wire [3:0]digit_pwr;
