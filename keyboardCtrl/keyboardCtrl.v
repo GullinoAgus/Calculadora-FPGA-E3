@@ -5,7 +5,7 @@ module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, 
                                                 //KeyPressed se activa cuando se presiona una tecla de la columna
     wire D0, D1, Q0, Q1, KeyPressed;
     output wire KeyRead;                 //D0, D1 son las filas del teclado para hacer polling
-    output reg [0:2]state = 3'b001;
+    output [0:2]state;
 
                                                 //KeyRead indica al toplevel que se presiona una tecla
     output EnableKeyb;                          //EnableKeyb activa al teclado para funcionar
@@ -15,7 +15,7 @@ module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, 
     //assign EnableKeyb = 1; //Esto deberia hacerlo el top level para activar o desactivar el teclado si lo desea
     output reg [3:0]keyboardcol;
     input wire [3:0]keyboardfil;
-
+    
     localparam [0:2]
     POLL1 = 3'b000,
     POLL2 = 3'b001,
@@ -25,40 +25,31 @@ module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, 
     SIGNAL2 = 3'b101,
     SIGNAL3 = 3'b110,
     SIGNAL4 = 3'b111;
-
-    reg [0:2] present_state = POLL1;
+    // assign state = present_state;
+    reg [0:2] present_state;
     always@(posedge CLK, posedge RESET)    //State register movement
         begin
             if (RESET == 1)begin
                 present_state = POLL1;
-                state = state + 1;
             end
             else begin
-                
                 case(present_state)
-                    POLL1:          if(KeyPressed == 0)        present_state <= POLL2;
-                                    else                present_state <= SIGNAL1;
-                    POLL2:          if(KeyPressed == 0)        present_state <= POLL3;
-                                    else                present_state <= SIGNAL2;
-                    POLL3:          if(KeyPressed == 0)        present_state <= POLL4;
-                                    else                present_state <= SIGNAL3;
-                    POLL4:          if(KeyPressed == 0)        present_state <= POLL1;
-                                    else                present_state <= SIGNAL4;
-                    //default: present_state = POLL1;
+                    POLL1:          if(!KeyPressed) present_state <= POLL2;
+                                    else present_state <= SIGNAL1;
+                    POLL2:          if(!KeyPressed) present_state <= POLL3;
+                                    else present_state <= SIGNAL2;
+                    POLL3:          if(!KeyPressed) present_state <= POLL4;
+                                    else present_state <= SIGNAL3;
+                    POLL4:          if(!KeyPressed) present_state <= POLL1;
+                                    else present_state <= SIGNAL4;
+                    SIGNAL1:        if(KeyPressed == 0)        present_state <= POLL2;
+                    SIGNAL2:        if(KeyPressed == 0)        present_state <= POLL3;
+                    SIGNAL3:        if(KeyPressed == 0)        present_state <= POLL4;
+                    SIGNAL4:        if(KeyPressed == 0)        present_state <= POLL1;
                 endcase
             end
         end
 
-    always@(KeyPressed) //Next state logic
-        begin
-            case(present_state)
-            SIGNAL1:        if(KeyPressed == 0)        present_state <= POLL1;
-            SIGNAL2:        if(KeyPressed == 0)        present_state <= POLL2;
-            SIGNAL3:        if(KeyPressed == 0)        present_state <= POLL3;
-            SIGNAL4:        if(KeyPressed == 0)        present_state <= POLL4;
-            default: present_state = POLL1;
-            endcase
-        end
     assign KeyRead = present_state[0];
     assign D0 = present_state[1];
     assign D1 = present_state[2];
@@ -96,7 +87,7 @@ endmodule
     input wire [3:0] I;
     output reg [1:0] A;
     output wire OE;
-    assign OE = |I;
+    assign OE = gnd;
     integer j;
     
     always @ (I)

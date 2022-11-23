@@ -26,7 +26,7 @@ module top
     input  wire        gpio_3,        // Display kbRow1
     input  wire        gpio_4,        // Display kbRow1
     input  wire        gpio_44,        // Display kbRow1
-    input  wire        gpio_5,         // Reset
+    input  wire        gpio_6,         // Reset
     output  wire        gpio_12,         // Salida de Clock
     output  wire        gpio_9,         // Salida de Clock
     output  wire        gpio_11,         // Salida de Clock
@@ -42,7 +42,7 @@ module top
     wire         [3:0]kbcol;
     wire         [3:0]kbrow;
     wire         [3:0]pressedKey;
-    wire         reset = gpio_5;
+    wire         reset = gpio_6;
     wire         [15:0]display;
     wire         [7:0]displaysticks;
     wire         [3:0]diplayselect;
