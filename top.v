@@ -26,9 +26,12 @@ module top
     input  wire        gpio_3,        // Display kbRow1
     input  wire        gpio_4,        // Display kbRow1
     input  wire        gpio_44,        // Display kbRow1
-
     input  wire        gpio_5,         // Reset
-    output  wire        gpio_12         // Salida de Clock
+    output  wire        gpio_12,         // Salida de Clock
+    output  wire        gpio_9,         // Salida de Clock
+    output  wire        gpio_11,         // Salida de Clock
+    output  wire        gpio_18         // Salida de Clock
+
 );
 
     wire         [15:0]num1;
@@ -68,7 +71,7 @@ module top
 
     // Test wires
     wire test;
-    assign gpio_12 = test;
+    assign gpio_12 = readKey;
 
 //----------------------------------------------------------------------------
 //                                                                          --
@@ -82,40 +85,41 @@ module top
 //                       Module Instantiation                               --
 //                                                                          --
 //----------------------------------------------------------------------------
-// mainFSB fsb(.kbEN(readKey),
-//     .pressedkey(pressedKey),
-//     .ALUres(res),
-//     .ALUNum1(num1),
-//     .ALUNum2(num2),
-//     .ALUOp(op),
-//     .Display(display),
-//     .clk(clk));
+mainFSB fsb(.kbEN(readKey),
+    .pressedkey(pressedKey),
+    .ALUres(res),
+    .ALUNum1(num1),
+    .ALUNum2(num2),
+    .ALUOp(op),
+    .Display(display),
+    .clk(clk));
 keyboardCtrl kbctrl(.CLK(clk),
                     .keyboardfil(kbrow), 
                     .EnableKeyb(supply), 
                     .keyboardcol(kbcol), 
                     .RESET(reset), 
                     .BCDKey(pressedKey), 
-                    .KeyRead(readKey));
+                    .KeyRead(readKey),
+                    .state({gpio_9, gpio_11, gpio_18}));
 
 wire [3:0]digit;
 wire [3:0]digit_pwr;
-// fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) , 
-// 								.resetn(~reset),
-// 								.en(1) ,
-// 								.in_4bcd(display) ,
-// 								.out_bcd(digit) ,
-// 								.out_shr(digit_pwr) ); 		
+fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) , 
+								.resetn(~reset),
+								.en(1) ,
+								.in_4bcd(display) ,
+								.out_bcd(digit) ,
+								.out_shr(digit_pwr) ); 		
 
 		// instantce bcd2seg				
-// bcd_2seg uut_bcd2seg (
-// 				.in_bcd(digit),
-// 			 	.seg(displaysticks));		
-// ALU u_alu(    
-//     .num1(num1), .num2(num2),     //Num 1 and 2 BCD
-//     .op(op),              //Operand
-//     .clk(clk),             
-//     .res(res));       //Output BCD result);
+bcd_2seg uut_bcd2seg (
+				.in_bcd(digit),
+			 	.seg(displaysticks));		
+ALU u_alu(    
+    .num1(num1), .num2(num2),     //Num 1 and 2 BCD
+    .op(op),              //Operand
+    .clk(clk),             
+    .res(res));       //Output BCD result);
 
 
 endmodule

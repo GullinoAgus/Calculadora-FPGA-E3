@@ -1,10 +1,12 @@
 
-module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, KeyRead);
+module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, KeyRead, state);
 
     input wire CLK, RESET;  //Q0, Q1 son las columnas que se energizaron del teclado
                                                 //KeyPressed se activa cuando se presiona una tecla de la columna
     wire D0, D1, Q0, Q1, KeyPressed;
     output wire KeyRead;                 //D0, D1 son las filas del teclado para hacer polling
+    output reg [0:2]state = 3'b001;
+
                                                 //KeyRead indica al toplevel que se presiona una tecla
     output EnableKeyb;                          //EnableKeyb activa al teclado para funcionar
     output [0:3] BCDKey;                    //En este cable esta escrito el BCD a transportar
@@ -31,26 +33,29 @@ module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, 
                 present_state = POLL1;
             end
             else begin
-                present_state = next_state;
+                test = test + 1;
+                case(present_state)
+                    POLL1:          if(KeyPressed == 0)        present_state = POLL2;
+                                    else                present_state = SIGNAL1;
+                    POLL2:          if(KeyPressed == 0)        present_state = POLL3;
+                                    else                present_state = SIGNAL2;
+                    POLL3:          if(KeyPressed == 0)        present_state = POLL4;
+                                    else                present_state = SIGNAL3;
+                    POLL4:          if(KeyPressed == 0)        present_state = POLL1;
+                                    else                present_state = SIGNAL4;
+                    default: next_state = POLL1;
+                endcase
             end
         end
 
-    always@(present_state, KeyPressed) //Next state logic
+    always@(KeyPressed) //Next state logic
         begin
             case(present_state)
-            POLL1:          if(KeyPressed == 0)        next_state = POLL2;
-                            else                next_state = SIGNAL1;
-            POLL2:          if(KeyPressed == 0)        next_state = POLL3;
-                            else                next_state = SIGNAL2;
-            POLL3:          if(KeyPressed == 0)        next_state = POLL4;
-                            else                next_state = SIGNAL3;
-            POLL4:          if(KeyPressed == 0)        next_state = POLL1;
-                            else                next_state = SIGNAL4;
-            SIGNAL1:        if(KeyPressed == 0)        next_state = POLL1;
-            SIGNAL2:        if(KeyPressed == 0)        next_state = POLL2;
-            SIGNAL3:        if(KeyPressed == 0)        next_state = POLL3;
-            SIGNAL4:        if(KeyPressed == 0)        next_state = POLL4;
-            default: next_state = POLL1;
+            SIGNAL1:        if(KeyPressed == 0)        present_state = POLL1;
+            SIGNAL2:        if(KeyPressed == 0)        present_state = POLL2;
+            SIGNAL3:        if(KeyPressed == 0)        present_state = POLL3;
+            SIGNAL4:        if(KeyPressed == 0)        present_state = POLL4;
+            default: next_state <= POLL1;
             endcase
         end
     assign KeyRead = present_state[0];
