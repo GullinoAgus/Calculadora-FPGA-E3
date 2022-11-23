@@ -26,24 +26,24 @@ module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, 
     SIGNAL3 = 3'b110,
     SIGNAL4 = 3'b111;
 
-    reg [0:2] present_state = POLL1, next_state;
+    reg [0:2] present_state = POLL1;
     always@(posedge CLK)    //State register movement
         begin
+            state = state + 1;
             if (RESET == 1)begin
                 present_state = POLL1;
             end
             else begin
-                test = test + 1;
                 case(present_state)
-                    POLL1:          if(KeyPressed == 0)        present_state = POLL2;
-                                    else                present_state = SIGNAL1;
-                    POLL2:          if(KeyPressed == 0)        present_state = POLL3;
-                                    else                present_state = SIGNAL2;
-                    POLL3:          if(KeyPressed == 0)        present_state = POLL4;
-                                    else                present_state = SIGNAL3;
-                    POLL4:          if(KeyPressed == 0)        present_state = POLL1;
-                                    else                present_state = SIGNAL4;
-                    default: next_state = POLL1;
+                    POLL1:          if(KeyPressed == 0)        present_state <= POLL2;
+                                    else                present_state <= SIGNAL1;
+                    POLL2:          if(KeyPressed == 0)        present_state <= POLL3;
+                                    else                present_state <= SIGNAL2;
+                    POLL3:          if(KeyPressed == 0)        present_state <= POLL4;
+                                    else                present_state <= SIGNAL3;
+                    POLL4:          if(KeyPressed == 0)        present_state <= POLL1;
+                                    else                present_state <= SIGNAL4;
+                    //default: present_state = POLL1;
                 endcase
             end
         end
@@ -51,11 +51,11 @@ module keyboardCtrl ( CLK, keyboardfil, EnableKeyb, keyboardcol, RESET, BCDKey, 
     always@(KeyPressed) //Next state logic
         begin
             case(present_state)
-            SIGNAL1:        if(KeyPressed == 0)        present_state = POLL1;
-            SIGNAL2:        if(KeyPressed == 0)        present_state = POLL2;
-            SIGNAL3:        if(KeyPressed == 0)        present_state = POLL3;
-            SIGNAL4:        if(KeyPressed == 0)        present_state = POLL4;
-            default: next_state <= POLL1;
+            SIGNAL1:        if(KeyPressed == 0)        present_state <= POLL1;
+            SIGNAL2:        if(KeyPressed == 0)        present_state <= POLL2;
+            SIGNAL3:        if(KeyPressed == 0)        present_state <= POLL3;
+            SIGNAL4:        if(KeyPressed == 0)        present_state <= POLL4;
+            default: present_state = POLL1;
             endcase
         end
     assign KeyRead = present_state[0];

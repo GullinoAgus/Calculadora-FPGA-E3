@@ -34,92 +34,92 @@ module top
 
 );
 
-    wire         [15:0]num1;
-    wire         [15:0]num2;
-    wire         [3:0]op;
-    wire         [15:0]res;
-    wire         clk;
-    wire         [3:0]kbcol;
-    wire         [3:0]kbrow;
-    wire         [3:0]pressedKey;
-    wire         reset = gpio_5;
-    wire         [15:0]display;
-    wire         [7:0]displaysticks;
-    wire         [3:0]diplayselect;
-    wire         readKey;
+    // wire         [15:0]num1;
+    // wire         [15:0]num2;
+    // wire         [3:0]op;
+    // wire         [15:0]res;
+    // wire         clk;
+    // wire         [3:0]kbcol;
+    // wire         [3:0]kbrow;
+    // wire         [3:0]pressedKey;
+    // wire         reset = gpio_5;
+    // wire         [15:0]display;
+    // wire         [7:0]displaysticks;
+    // wire         [3:0]diplayselect;
+    // wire         readKey;
 
-    assign displaysticks[0] = gpio_28;
-    assign displaysticks[1] = gpio_38;
-    assign displaysticks[2] = gpio_42;
-    assign displaysticks[3] = gpio_36;
-    assign displaysticks[4] = gpio_43;
-    assign displaysticks[5] = gpio_34;
-    assign displaysticks[6] = gpio_37;
-    assign displaysticks[7] = gpio_31;
-    assign diplayselect[0] = gpio_35;
-    assign diplayselect[0] = gpio_32;
-    assign diplayselect[0] = gpio_27;
-    assign diplayselect[0] = gpio_26;
-    assign kbcol[0] = gpio_2;
-    assign kbcol[1] = gpio_46;
-    assign kbcol[2] = gpio_47;
-    assign kbcol[3] = gpio_45;
-    assign kbrow[0] = gpio_48;
-    assign kbrow[1] = gpio_3;
-    assign kbrow[2] = gpio_4;
-    assign kbrow[3] = gpio_44;
+    // assign displaysticks[0] = gpio_28;
+    // assign displaysticks[1] = gpio_38;
+    // assign displaysticks[2] = gpio_42;
+    // assign displaysticks[3] = gpio_36;
+    // assign displaysticks[4] = gpio_43;
+    // assign displaysticks[5] = gpio_34;
+    // assign displaysticks[6] = gpio_37;
+    // assign displaysticks[7] = gpio_31;
+    // assign diplayselect[0] = gpio_35;
+    // assign diplayselect[0] = gpio_32;
+    // assign diplayselect[0] = gpio_27;
+    // assign diplayselect[0] = gpio_26;
+    // assign kbcol[0] = gpio_2;
+    // assign kbcol[1] = gpio_46;
+    // assign kbcol[2] = gpio_47;
+    // assign kbcol[3] = gpio_45;
+    // assign kbrow[0] = gpio_48;
+    // assign kbrow[1] = gpio_3;
+    // assign kbrow[2] = gpio_4;
+    // assign kbrow[3] = gpio_44;
 
     // Test wires
-    wire test;
-    assign gpio_12 = readKey;
 
+ 
 //----------------------------------------------------------------------------
 //                                                                          --
 //                       Internal Oscillator                                --
 //                                                                          --
 //----------------------------------------------------------------------------
-    SB_LFOSC  u_SB_LFOSC(.CLKLFPU(1), .CLKLFEN(1), .CLKLF(clk));
+ SB_LFOSC  u_SB_LFOSC(.CLKLFPU(1), .CLKLFEN(1), .CLKLF(clk));
+    assign gpio_12 = clk;
 
 //----------------------------------------------------------------------------
 //                                                                          --
 //                       Module Instantiation                               --
 //                                                                          --
 //----------------------------------------------------------------------------
-mainFSB fsb(.kbEN(readKey),
-    .pressedkey(pressedKey),
-    .ALUres(res),
-    .ALUNum1(num1),
-    .ALUNum2(num2),
-    .ALUOp(op),
-    .Display(display),
-    .clk(clk));
-keyboardCtrl kbctrl(.CLK(clk),
-                    .keyboardfil(kbrow), 
-                    .EnableKeyb(supply), 
-                    .keyboardcol(kbcol), 
-                    .RESET(reset), 
-                    .BCDKey(pressedKey), 
-                    .KeyRead(readKey),
-                    .state({gpio_9, gpio_11, gpio_18}));
+// mainFSB fsb(.kbEN(readKey),
+//     .pressedkey(pressedKey),
+//     .ALUres(res),
+//     .ALUNum1(num1),
+//     .ALUNum2(num2),
+//     .ALUOp(op),
+//     .Display(display),
+//     .clk(clk));
+// keyboardCtrl kbctrl(.CLK(clk),
+//                     .keyboardfil(kbrow), 
+//                     .EnableKeyb(supply), 
+//                     .keyboardcol(kbcol), 
+//                     .RESET(reset), 
+//                     .BCDKey(pressedKey), 
+//                     .KeyRead(readKey),
+//                     .state({gpio_9, gpio_11, gpio_18}));
 
 wire [3:0]digit;
 wire [3:0]digit_pwr;
-fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) , 
-								.resetn(~reset),
-								.en(1) ,
-								.in_4bcd(display) ,
-								.out_bcd(digit) ,
-								.out_shr(digit_pwr) ); 		
+// fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) , 
+// 								.resetn(~reset),
+// 								.en(1) ,
+// 								.in_4bcd(display) ,
+// 								.out_bcd(digit) ,
+// 								.out_shr(digit_pwr) ); 		
 
 		// instantce bcd2seg				
-bcd_2seg uut_bcd2seg (
-				.in_bcd(digit),
-			 	.seg(displaysticks));		
-ALU u_alu(    
-    .num1(num1), .num2(num2),     //Num 1 and 2 BCD
-    .op(op),              //Operand
-    .clk(clk),             
-    .res(res));       //Output BCD result);
+// bcd_2seg uut_bcd2seg (
+// 				.in_bcd(digit),
+// 			 	.seg(displaysticks));		
+// ALU u_alu(    
+//     .num1(num1), .num2(num2),     //Num 1 and 2 BCD
+//     .op(op),              //Operand
+//     .clk(clk),             
+//     .res(res));       //Output BCD result);
 
 
 endmodule
