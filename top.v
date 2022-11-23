@@ -30,7 +30,8 @@ module top
     output  wire        gpio_12,         // Salida de Clock
     output  wire        gpio_9,         // Salida de Clock
     output  wire        gpio_11,         // Salida de Clock
-    output  wire        gpio_18         // Salida de Clock
+    output  wire        gpio_13,         // Salida de Clock
+    output  wire        gpio_21         // Salida de Clock
 
 );
 
@@ -70,8 +71,12 @@ module top
     assign kbrow[3] = gpio_44;
 
     // Test wires
+    wire [0:3]test;
+    // assign test[0] = gpio_9;
+    // assign test[1] = gpio_11;
+    // assign test[2] = gpio_13;
+    // assign test[3] = gpio_21;
 
- 
 //----------------------------------------------------------------------------
 //                                                                          --
 //                       Internal Oscillator                                --
@@ -85,40 +90,42 @@ module top
 //                       Module Instantiation                               --
 //                                                                          --
 //----------------------------------------------------------------------------
-mainFSB fsb(.kbEN(readKey),
-    .pressedkey(pressedKey),
-    .ALUres(res),
-    .ALUNum1(num1),
-    .ALUNum2(num2),
-    .ALUOp(op),
-    .Display(display),
-    .clk(clk));
+// mainFSB fsb(.kbEN(readKey),
+//     .pressedkey(pressedKey),
+//     .ALUres(res),
+//     .ALUNum1(num1),
+//     .ALUNum2(num2),
+//     .ALUOp(op),
+//     .Display(display),
+//     .clk(clk));
+assign gpio_9 = pressedKey[3];
+assign gpio_11 = pressedKey[2];
+assign gpio_13 = pressedKey[1];
+assign gpio_21 = pressedKey[0];
 keyboardCtrl kbctrl(.CLK(clk),
-                    .keyboardfil(kbrow), 
-                    .EnableKeyb(supply), 
-                    .keyboardcol(kbcol), 
-                    .RESET(reset), 
-                    .BCDKey(pressedKey), 
-                    .KeyRead(readKey),
-                    .state({gpio_9, gpio_11}));
+                    .keyboardfil(kbrow),
+                    .keyboardcol(kbcol),
+                    .RESET(reset),
+                    .BCDKey(pressedKey),
+                    .KeyRead(readKey));
 
 wire [3:0]digit;
 wire [3:0]digit_pwr;
-fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) , 
+fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) ,
 								.resetn(~reset),
 								.en(1) ,
 								.in_4bcd(display) ,
 								.out_bcd(digit) ,
-								.out_shr(digit_pwr) ); 		
+								.out_shr(digit_pwr) );
 
-		// instantce bcd2seg				
+		// instantce bcd2seg
 bcd_2seg uut_bcd2seg (
 				.in_bcd(digit),
-			 	.seg(displaysticks));		
-ALU u_alu(    
+			 	.seg(displaysticks));
+ALU u_alu(
     .num1(num1), .num2(num2),     //Num 1 and 2 BCD
     .op(op),              //Operand
-    .clk(clk),             
+    .clk(clk),
     .res(res));       //Output BCD result);
 
 
