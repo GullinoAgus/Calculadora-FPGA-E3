@@ -19,24 +19,23 @@ module Encoder(I, A, OE);
     input wire [3:0] I;
     output reg [1:0] A;
 	output reg OE;
-    integer j;
     
     always @ (I)
         begin       
-            casez (I)
-				4'bzzz1: begin
+            case (I)
+				4'b0001: begin
 					A = 2'b00;
 					OE = 1;
 				end 
-				4'bzz1z: begin
+				4'b0010: begin
 					A = 2'b01;
 					OE = 1;
 				end 
-				4'bz1zz: begin
+				4'b0100: begin
 					A = 2'b10;
 					OE = 1;
 				end 
-				4'b1zzz: begin
+				4'b1000: begin
 					A = 2'b11;
 					OE = 1;
 				end 

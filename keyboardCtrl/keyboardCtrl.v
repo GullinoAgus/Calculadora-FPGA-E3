@@ -21,7 +21,7 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
                 if(!KeyPressed) colnum = colnum + 1;
             end
             
-        end
+        end 
         
     assign KeyRead = KeyPressed;
     assign D0 = colnum[0];

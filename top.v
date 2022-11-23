@@ -82,7 +82,10 @@ module top
 //                       Internal Oscillator                                --
 //                                                                          --
 //----------------------------------------------------------------------------
- SB_LFOSC  u_SB_LFOSC(.CLKLFPU(1), .CLKLFEN(1), .CLKLF(clk));
+SB_LFOSC  u_SB_LFOSC(.CLKLFPU(1), .CLKLFEN(1), .CLKLF(clk));
+SB_HFOSC #(
+    .CLKHF_DIV("0b10")  // 12 MHz = ~48 MHz / 4 (0b00=1, 0b01=2, 0b10=4, 0b11=8)
+    )  u_SB_HFOSC(.CLKHFPU(1), .CLKHFEN(1), .CLKHF(HFclk));
     assign gpio_12 = clk;
 
 //----------------------------------------------------------------------------
@@ -90,18 +93,7 @@ module top
 //                       Module Instantiation                               --
 //                                                                          --
 //----------------------------------------------------------------------------
-// mainFSB fsb(.kbEN(readKey),
-//     .pressedkey(pressedKey),
-//     .ALUres(res),
-//     .ALUNum1(num1),
-//     .ALUNum2(num2),
-//     .ALUOp(op),
-//     .Display(display),
-//     .clk(clk));
-assign gpio_9 = pressedKey[3];
-assign gpio_11 = pressedKey[2];
-assign gpio_13 = pressedKey[1];
-assign gpio_21 = pressedKey[0];
+
 keyboardCtrl kbctrl(.CLK(clk),
                     .keyboardfil(kbrow),
                     .keyboardcol(kbcol),
@@ -111,14 +103,14 @@ keyboardCtrl kbctrl(.CLK(clk),
 
 wire [3:0]digit;
 wire [3:0]digit_pwr;
-fsm_bin_2bcd uut_bin2bcd( 	.clk(clk) ,
+fsm_bin_2bcd uut_bin2bcd( .clk(clk) ,
 								.resetn(~reset),
 								.en(1) ,
 								.in_4bcd(display) ,
 								.out_bcd(digit) ,
 								.out_shr(digit_pwr) );
 
-		// instantce bcd2seg
+// 		// instantce bcd2seg
 bcd_2seg uut_bcd2seg (
 				.in_bcd(digit),
 			 	.seg(displaysticks));
@@ -127,6 +119,14 @@ ALU u_alu(
     .op(op),              //Operand
     .clk(clk),
     .res(res));       //Output BCD result);
+mainFSB fsb(.kbEN(readKey),
+    .pressedkey(pressedKey),
+    .ALUres(res),
+    .ALUNum1(num1),
+    .ALUNum2(num2),
+    .ALUOp(op),
+    .Display(display),
+    .clk(clk));
 
 
 endmodule
