@@ -45,10 +45,10 @@ set_io -nowarn gpio_20 20
 set_io -nowarn gpio_10 10
 
 # Following are also found on v2.x of the UPduino
-set_io -nowarn gpio_12 12
-set_io -nowarn gpio_21 21
-set_io -nowarn gpio_13 13
-set_io -nowarn gpio_19 19
+set_io pulldown -nowarn gpio_12 12
+set_io pulldown -nowarn gpio_21 21
+set_io pulldown -nowarn gpio_13 13
+set_io pulldown -nowarn gpio_19 19
 set_io -nowarn gpio_18 18
 set_io -nowarn gpio_11 11
 set_io -nowarn gpio_9 9
