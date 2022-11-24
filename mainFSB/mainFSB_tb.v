@@ -12,15 +12,16 @@ module mainFSB_tb();
     wire [3:0]ALUOp;
     wire ALUclk;
     wire [15:0]Display;
-
-    parameter equal = 4'b1010;
-    parameter AC = 4'b1011;
-    parameter plus = 4'b1100;
-    parameter minus = 4'b1101;
-    parameter mult = 4'b1110;
-    parameter div = 4'b1111;
+    reg reset = 0;
+    parameter equal = 10;
+    parameter AC = 11;
+    parameter plus = 12;
+    parameter minus = 13;
+    parameter mult = 14;
+    parameter div = 15;
+    
     ALU uut(.num1(ALUNum1), .num2(ALUNum2), .op(ALUOp), .res(res), .clk(clk));
-    mainFSB tb(.clk(clk), .kbEN(kbEN), .pressedkey(pressedkey), .ALUNum1(ALUNum1), .ALUNum2(ALUNum2), .ALUOp(ALUOp), .ALUres(res), .Display(Display));
+    mainFSB tb(.clk(clk), .kbEN(kbEN), .pressedkey(pressedkey), .ALUNum1(ALUNum1), .ALUNum2(ALUNum2), .ALUOp(ALUOp), .ALUres(res), .Display(Display), .reset(reset));
 
     always #1 clk = ~clk;
 

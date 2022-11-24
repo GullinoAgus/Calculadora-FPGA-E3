@@ -13,6 +13,19 @@ module mainFSB(
     output wire [5:0]state
 
 );
+
+    // States of the FSM
+    parameter wait4num1 = 3'b000;
+    parameter wait4num2 = 3'b001;
+    parameter showRes = 3'b010;
+
+    parameter equal = 10;
+    parameter AC = 11;
+    parameter plus = 12;
+    parameter minus = 13;
+    parameter mult = 14;
+    parameter div = 15;
+    
     reg [3:0]operation = 4'b0000;
     reg [15:0]num1 = 16'b000000000000;
     reg [15:0]num2 = 16'b000000000000;
@@ -28,17 +41,6 @@ module mainFSB(
     assign ALUOp = operation;           // operation 4 ALU
     assign state = currKey;             // Testing
 
-    // States of the FSM
-    parameter wait4num1 = 3'b000;
-    parameter wait4num2 = 3'b001;
-    parameter showRes = 3'b010;
-
-    parameter equal = 10;
-    parameter AC = 11;
-    parameter plus = 12;
-    parameter minus = 13;
-    parameter mult = 14;
-    parameter div = 15;
 
     always @(posedge kbEN) begin
         if (reset == 0) begin
