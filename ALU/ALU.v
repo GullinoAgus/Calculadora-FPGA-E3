@@ -2,12 +2,11 @@
 module ALU(
     input[15:0] num1, num2,     //Num 1 and 2 BCD
     input[3:0] op,              //Operand
-    input exe,             
+    input exe,                  //Signal to do the operation
     output reg [15:0] res,       //Output BCD result
-    output wire [5:0]state
 );
 
-localparam nan = 16'hFBAB;
+localparam nan = 16'hFBAB;  //Not a number param
 
 localparam plus = 4'd12;
 localparam minus = 4'd13;
@@ -18,7 +17,7 @@ wire[13:0] num1Bin, num2Bin;
 integer i, binResult;
 assign num1Bin = fromBCDtoBin(num1); //assign make connections between inputs and outputs
 assign num2Bin = fromBCDtoBin(num2);
-assign state = {exe, res[3:0]};
+
 always @(posedge exe)
     begin
         if ((op == div) && (num2 == 0)) begin

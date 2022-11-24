@@ -1,24 +1,30 @@
 
-module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
+module keyboardCtrl ( 
+    input wire clk, reset,
+    input wire [3:0] keyboardfil, //Col
+    output reg [3:0] keyboardcol, //Fil
+    output reg [3:0] BCDKey, //This is not a BCDKey, is equivalent key in keyboard, from 0 to D, # and *
+    output reg KeyRead //Flag that indicate that any key was pressed
+);
 
-    input wire CLK, RESET;  //Q0, Q1 son las columnas que se energizaron del teclado
-                                                //KeyPressed se activa cuando se presiona una tecla de la columna
-    wire D0, D1, Q0, Q1; 
-    wire KeyPressed;
-    output reg KeyRead;                 //KeyRead indica al toplevel que se presiona una tecla
-    output reg [3:0] BCDKey;                 //En este cable esta escrito el BCD a transportar
+    wire D0, D1, Q0, Q1; //D for rows and Q for columns
+    wire KeyPressed;  //High when any key is was pressed from keyboard
     
-    output reg [3:0]keyboardcol;
-    input wire [3:0]keyboardfil;
     reg [1:0]colnum = 2'b00;
+    assign D0 = colnum[0];
+    assign D1 = colnum[1];
 
-    always@(posedge CLK, posedge RESET)    //State register movement
+    //Modulos for sweep keyboard
+	Deco_138 decoder(.A({D0, D1}), .Y(keyboardcol));
+    Encoder encoder(.I(keyboardfil), .A({Q0, Q1}), .OE(KeyPressed));
+
+    always @ (posedge clk, posedge reset)    
         begin
-            if (RESET == 1)begin
+            if (reset == 1)begin
                 colnum = 0;
             end
             else begin
-                if(!KeyPressed) colnum = colnum + 1;
+                if(!KeyPressed) colnum = colnum + 1; //State register movement
                 case ({D0, D1, Q0, Q1})
                     4'b0000:begin
                         BCDKey = 1;
@@ -57,8 +63,7 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
                         BCDKey = 14;
                     end
                     4'b0011:begin
-                        BCDKey = 11;                KeyRead <= KeyPressed;
-
+                        BCDKey = 11;                
                     end
                     4'b0111:begin
                         BCDKey = 0;
@@ -73,14 +78,5 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
                 endcase
                 KeyRead <= KeyPressed;
             end
-            
         end 
-        
-    assign D0 = colnum[0];
-    assign D1 = colnum[1];
-
-	Deco_138 decoder(.A({D0, D1}), .Y(keyboardcol));
-    Encoder encoder(.I(keyboardfil), .A({Q0, Q1}), .OE(KeyPressed));
-
-
 endmodule

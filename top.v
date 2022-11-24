@@ -99,10 +99,10 @@ SB_LFOSC  u_SB_LFOSC(.CLKLFPU(1), .CLKLFEN(1), .CLKLF(clk));
 assign test[6] = readKey;
 wire clkkb;
 Clock_divider divider(clk, clkkb);
-keyboardCtrl kbctrl(.CLK(clkkb),
+keyboardCtrl kbctrl(.clk(clkkb),
                     .keyboardfil(kbrow),
                     .keyboardcol(kbcol),
-                    .RESET(reset),
+                    .reset(reset),
                     .BCDKey(pressedKey),
                     .KeyRead(readKey));
 
@@ -122,8 +122,7 @@ ALU u_alu(
     .num1(num1), .num2(num2),     //Num 1 and 2 BCD
     .op(op),              //Operand
     .exe(exe),
-    .res(res),
-    .state(test[0:5]));       //Output BCD result);
+    .res(res));       //Output BCD result
 mainFSB fsb(.readKey(readKey),
     .pressedkey(pressedKey),
     .ALUres(res),

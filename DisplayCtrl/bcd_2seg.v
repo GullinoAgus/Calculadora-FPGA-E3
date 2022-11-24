@@ -5,8 +5,6 @@ module bcd_2seg (in_bcd,seg);
 	input wire [3:0] in_bcd;
 	output reg [0:6] seg; 
 	
-	
-	
 	//actuo siempre que cambie el numero 
     always @(in_bcd)
     begin
