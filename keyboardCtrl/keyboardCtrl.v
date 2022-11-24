@@ -70,7 +70,7 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
                     end
                     default: BCDKey = 0;
                 endcase
-                KeyRead = KeyPressed;
+                KeyRead <= KeyPressed;
             end
             
         end 

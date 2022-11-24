@@ -33,7 +33,7 @@ module top
     output  wire        gpio_18,       // Test
     output  wire        gpio_19,       // Test
     output  wire        gpio_13,        // Test
-    output  wire        gpio_21,        // Test
+    output  wire        gpio_21        // Test
 
 );
 
