@@ -15,9 +15,9 @@ module mainFSB(
 );
 
     // States of the FSM
-    parameter wait4num1 = 3'b000;
-    parameter wait4num2 = 3'b001;
-    parameter showRes = 3'b010;
+    parameter wait4num1 = 2'b00;
+    parameter wait4num2 = 2'b01;
+    parameter showRes = 2'b10;
 
     parameter equal = 10;
     parameter AC = 11;
@@ -25,7 +25,7 @@ module mainFSB(
     parameter minus = 13;
     parameter mult = 14;
     parameter div = 15;
-    
+
     reg [3:0]operation = 4'b0000;
     reg [15:0]num1 = 16'b000000000000;
     reg [15:0]num2 = 16'b000000000000;
@@ -33,17 +33,18 @@ module mainFSB(
     reg [3:0]currKey = 4'b0000;
     reg [15:0]info2display;
     reg [3:0]counter = 0;
-    reg [2:0]curr_state = wait4num1;
+    reg [1:0]curr_state = wait4num1;
 
     assign Display = info2display;      // 4 BCD digits that go to the display
     assign ALUNum1 = num1;               // number 2 ALU
     assign ALUNum2 = num2;              // number 2 ALU
     assign ALUOp = operation;           // operation 4 ALU
+
     assign state = currKey;             // Testing
 
 
     always @(posedge kbEN) begin
-        if (reset == 0) begin
+        // if (reset == 0) begin
 
             currKey = pressedkey;
             case (curr_state)
@@ -89,26 +90,31 @@ module mainFSB(
                             num1 <= {num1, currKey};
                         end
                     endcase
+
                 end
             endcase
-        end
+        // end
+        // else begin
+            
+        // end
     end
 
-    always @(posedge clk, posedge reset) begin
-        if (reset == 1)begin
-            num1 = 0;
-            num2 = 0;
-            curr_state = wait4num1;
-        end
-        else begin
+    always @(posedge clk) begin
+        // if (reset == 1)begin
+        //     num1 = 0;
+        //     num2 = 0;
+        //     curr_state = wait4num1;
+        // end
+        // else begin
             case (curr_state)
-                    wait4num1:
+                    wait4num1:begin
                         info2display = num1;
+                    end
                     wait4num2:
                         info2display = num2;
                     showRes:
                         info2display = ALUres;
             endcase
-        end
+        // end
     end
 endmodule

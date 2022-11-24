@@ -20,7 +20,7 @@ module bcd_2seg (in_bcd,seg);
             6 : seg <= ~7'b0000010;
             7 : seg <= ~7'b1111000;
             8 : seg <= ~7'b0000000;
-            9 : seg <= ~7'b0001000;
+            9 : seg <= ~7'b0010000;
             // si es A B C D E F apago display
             default : seg <= 7'b1111111; 
         endcase

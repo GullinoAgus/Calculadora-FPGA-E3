@@ -5,3 +5,4 @@ SConstruct
 .*.dblite
 *.out
 *.vcd
+MakeFile
