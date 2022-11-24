@@ -8,7 +8,8 @@ module mainFSB(
     output wire [15:0]ALUNum2,
     output wire [3:0]ALUOp,
     output wire [15:0]Display,
-    input wire clk
+    input wire clk,
+    input wire reset
 
 );
     reg [3:0]operation = 4'b0000;
@@ -86,13 +87,22 @@ module mainFSB(
     end
 
     always @(posedge clk) begin
+        // if (reset == 1)begin
+        //     num1 = 0;
+        //     num2 = 0;
+        //     ALUres = 0;
+        //     curr_state = wait4num1;
+        // end
+        // else begin
+            
+        // end
         case (curr_state)
-            wait4num1:
-                info2display = num1;
-            wait4num2:
-                info2display = num2;
-            showRes:
-                info2display = ALUres;
-        endcase
+                wait4num1:
+                    info2display = num1;
+                wait4num2:
+                    info2display = num2;
+                showRes:
+                    info2display = ALUres;
+            endcase
     end
 endmodule
