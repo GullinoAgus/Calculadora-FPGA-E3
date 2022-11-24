@@ -7,7 +7,7 @@ module ALU(
     output wire [5:0]state
 );
 
-localparam nan = 16'h0BAB;
+localparam nan = 16'hFBAB;
 
 localparam plus = 4'd12;
 localparam minus = 4'd13;
