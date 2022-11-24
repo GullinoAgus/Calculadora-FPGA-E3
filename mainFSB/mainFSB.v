@@ -9,7 +9,8 @@ module mainFSB(
     output wire [3:0]ALUOp,
     output wire [15:0]Display,
     input wire clk,
-    input wire reset
+    input wire reset,
+    output wire [0:2]state
 
 );
     reg [3:0]operation = 4'b0000;
@@ -18,14 +19,14 @@ module mainFSB(
     reg [15:0]res = 16'b000000000000;
     reg [3:0]currKey = 4'b0000;
     reg [15:0]info2display;
-
+    reg [0:2]counter = 0;
     reg [2:0]curr_state = wait4num1;
 
     assign Display = info2display;
     assign ALUNum1 = num1;
     assign ALUNum2 = num2;
     assign ALUOp = operation;
-
+    assign state = counter;
     parameter wait4num1 = 3'b000;
     parameter wait4num2 = 3'b001;
     parameter wait4equal = 3'b010;
@@ -39,70 +40,73 @@ module mainFSB(
     parameter div = 4'b1111;
 
     always @(negedge kbEN) begin
-        currKey = pressedkey;
-        case (curr_state)
-            showRes: begin
-                case (currKey)
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
-                        num1 = 0;
-                        num2 = 0;
-                        num1 <= {num1, currKey};
-                        curr_state = wait4num1;
-                    end
-                endcase
-            end
-            wait4num2: begin
-                case (currKey)
-                    equal: begin
-                        curr_state = showRes;                        
-                        end
-                    AC: begin
-                        if (!num2) begin
-                            num2 = 0;
+        if (reset == 0) begin
+
+            currKey = pressedkey;
+            case (curr_state)
+                showRes: begin
+                    case (currKey)
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
                             num1 = 0;
+                            num2 = 0;
+                            num1 <= {num1, currKey};
+                            curr_state = wait4num1;
                         end
-                        num2 = 0;
-                        end
+                    endcase
+                end
+                wait4num2: begin
+                    case (currKey)
+                        equal: begin
+                            curr_state = showRes;                        
+                            end
+                        AC: begin
+                            if (!num2) begin
+                                num2 = 0;
+                                num1 = 0;
+                            end
+                            num2 = 0;
+                            end
+                            
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
+                            num2 = {num2, currKey};
                         
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
-                        num2 = {num2, currKey};
+                    endcase
                     
-                endcase
-                
-            end
-            wait4num1:begin
-                case (currKey)
-                    plus, minus, div, mult: begin
-                        operation <= currKey;
-                        curr_state = wait4num2;
-                    end
-                    AC:
-                        num1 <= 0;
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
-                        num1 = {num1, currKey};
-                    
-                endcase
-            end
-        endcase
+                end
+                wait4num1:begin
+                    counter = counter + 1;
+                    case (currKey)
+                        plus, minus, div, mult: begin
+                            operation <= currKey;
+                            curr_state = wait4num2;
+                        end
+                        AC:
+                            num1 <= 0;
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
+                            num1 = {num1, currKey};
+                        
+                    endcase
+                end
+            endcase
+        end
     end
 
     always @(posedge clk) begin
-        // if (reset == 1)begin
-        //     num1 = 0;
-        //     num2 = 0;
-        //     ALUres = 0;
-        //     curr_state = wait4num1;
-        // end
-        // else begin
-            
-        // end
-        case (curr_state)
-                wait4num1:
-                    info2display = num1;
-                wait4num2:
-                    info2display = num2;
-                showRes:
-                    info2display = ALUres;
+        if (reset == 1)begin
+            num1 = 0;
+            num2 = 0;
+            curr_state = wait4num1;
+        end
+        else begin
+
+            case (curr_state)
+                    wait4num1:
+                        info2display = num1;
+                    wait4num2:
+                        info2display = num2;
+                    showRes:
+                        info2display = ALUres;
             endcase
+        end
     end
 endmodule

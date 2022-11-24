@@ -5,7 +5,7 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
                                                 //KeyPressed se activa cuando se presiona una tecla de la columna
     wire D0, D1, Q0, Q1; 
     wire KeyPressed;
-    output wire KeyRead;                 //KeyRead indica al toplevel que se presiona una tecla
+    output reg KeyRead;                 //KeyRead indica al toplevel que se presiona una tecla
     output [3:0] BCDKey;                 //En este cable esta escrito el BCD a transportar
     
     output reg [3:0]keyboardcol;
@@ -19,11 +19,11 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
             end
             else begin
                 if(!KeyPressed) colnum = colnum + 1;
+                KeyRead = KeyPressed;
             end
             
         end 
         
-    assign KeyRead = KeyPressed;
     assign D0 = colnum[0];
     assign D1 = colnum[1];
 	assign BCDKey[0] = D0;

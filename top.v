@@ -95,7 +95,7 @@ SB_LFOSC  u_SB_LFOSC(.CLKLFPU(1), .CLKLFEN(1), .CLKLF(clk));
 //                       Module Instantiation                               --
 //                                                                          --
 //----------------------------------------------------------------------------
-assign test[2:5] = pressedKey;
+
 assign test[6] = readKey;
 wire clkkb;
 Clock_divider divider(clk, clkkb);
@@ -130,7 +130,8 @@ mainFSB fsb(.kbEN(readKey),
     .ALUOp(op),
     .Display(display),
     .clk(clk),
-    .reset(reset));
+    .reset(reset),
+    .state(test[0:5]));
 
 
 endmodule

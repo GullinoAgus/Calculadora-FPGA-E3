@@ -25,7 +25,7 @@ MODULE_TO_DRAW = ./keyboardCtrl/keyboardCtrl.v keyboardCtrl/keybToBCD.v
 SOURCES_TB = mainFSB/mainFSB_tb.v $(LIB_SRC)
 PCF = upduino.pcf
 #QUIET = -q
-
+WORK_FREQUENCY = 0.01#MHz
 IVERILOG = apio raw 'iverilog
 YOSYS = apio raw 'yosys
 ICE40 = apio raw 'nextpnr-ice40
@@ -49,7 +49,7 @@ hardware.json: $(SOURCES)
 	$(YOSYS) -p "synth_ice40 -dsp -json hardware.json -abc9 -device u" $(QUIET) $(SOURCES)'
 
 hardware.asc: $(PCF) hardware.json
-	$(ICE40) --up5k --package sg48 --json hardware.json --asc hardware.asc --pcf-allow-unconstrained --pcf $(PCF) --freq 0.01 $(QUIET)'
+	$(ICE40) --up5k --package sg48 --json hardware.json --asc hardware.asc --pcf-allow-unconstrained --pcf $(PCF) --freq $(WORK_FREQUENCY) $(QUIET)'
 
 hardware.bin: hardware.asc
 	$(ICEPACK) hardware.asc hardware.bin'
