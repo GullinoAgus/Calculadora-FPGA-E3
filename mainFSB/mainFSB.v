@@ -40,60 +40,73 @@ module mainFSB(
     end
 
     always @(posedge clk) begin
-
         curr_state <= nxt_state;
-        if (readKey) begin
+        if (readKey) begin          // Control de tecla soltada
             keyreleased = 1'b0;
         end
         case (curr_state)
-            wait4num1: info2display = num1;
-            wait4num2: info2display = num2;
-            calculate:begin 
+            wait4num1: info2display = num1; // En estado inicial se muestra el numero 1
+
+            wait4num2: info2display = num2; // En estado de segundo numero se muestra el numero 2
+
+            calculate:begin                 // Se manda flanco a la ALU para q calcule el resultado
                 executecalc = 1;
                 nxt_state = showRes;
             end
-            showRes: info2display = ALUres;
+
+            showRes: info2display = ALUres; // Muestro el resultado que calculo la ALU
 
         endcase
-        if ((!readKey) && (!keyreleased)) begin
-            if(curr_state == wait4num1)begin
-                if (currKey < 4'b1010) begin
-                    
+        if ((!readKey) && (!keyreleased)) begin // Cuando se suelta la tecla luego de presionarla
+            
+            if(curr_state == wait4num1)begin    //Estado inicial esperando primer numero 
+                if (currKey < equal) begin      // Si se presiono un numero se concatena al q se muestra
                     num1 = {num1[11:0], currKey};
                 end
-                if (currKey > 4'b1011)begin
+
+                if (currKey > AC)begin          // Si se presiono un operador se guarda y se pasa al proximo estado
                     operation = currKey;
                     nxt_state = wait4num2;
                 end
-                if (currKey == 4'b1011) begin
+
+                if (currKey == AC) begin        // Si se presiono AC limpio el numero 1
                     num1 = 0;
                 end
             end
-            if(curr_state == wait4num2)begin
-                if (currKey < 4'b1010) begin
-                    
+            if(curr_state == wait4num2)begin    // Estado de espera para ingreso de numero 2
+                
+                if (currKey < equal) begin      // Si se ingreso un numero se concatena
                     num2 = {num2[11:0], currKey};
                 end
-                if (currKey == 4'b1010)begin
+                
+                if (currKey == equal)begin      // Si se presiona igual se manda la ALU a calcular
                     nxt_state = calculate;
                     executecalc = 0;
                 end
-                if (currKey == 4'b1011) begin
+                
+                if (currKey == AC) begin        // AC borra todo
                     num2 = 0;
                 end
+
             end
-            if(curr_state == showRes)begin
-                if (executecalc) begin
-                    executecalc = 0;
-                end
-                if (currKey < 4'b1010) begin
-                    num1 = {12'b000000000000, currKey};
+
+            if(curr_state == showRes)begin      // Estado donde se muestra el resultado en display
+                
+                if (currKey < equal) begin    // Si se ingresa otro numero se pasa al estado inicial con todo los regs limpios
+                    num1 = {12'd0, currKey};
                     num2 = 0;
                     nxt_state = wait4num1;
+                end
+                if (currKey > AC) begin         // si se presiona una operacion, se concatena y s econtinua operando sobre resultado
+                    num1 = ALUres;
+                    num2 = 0;
+                    operation = currKey;
+                    nxt_state = wait4num2;
                 end
             end
             keyreleased = 1'b1;
         end
+
     end
 
 endmodule

@@ -7,6 +7,13 @@ module ALU(
     output wire [5:0]state
 );
 
+localparam nan = 16'h0BAB;
+
+localparam plus = 4'd12;
+localparam minus = 4'd13;
+localparam mult = 4'd14;
+localparam div = 4'd15;
+
 wire[13:0] num1Bin, num2Bin;
 integer i, binResult;
 assign num1Bin = fromBCDtoBin(num1); //assign make connections between inputs and outputs
@@ -14,11 +21,15 @@ assign num2Bin = fromBCDtoBin(num2);
 assign state = {exe, res[3:0]};
 always @(posedge exe)
     begin
+        if ((op == div) && (num2 == 0)) begin
+            res = nan;
+        end
+        else begin
         case (op)
-            4'b1100: binResult = num1Bin + num2Bin;
-            4'b1101: binResult = num1Bin - num2Bin;
-            4'b1110: binResult = num1Bin * num2Bin;
-            4'b1111: binResult = num1Bin / num2Bin;
+            plus: binResult = num1Bin + num2Bin;
+            minus: binResult = num1Bin - num2Bin;
+            mult: binResult = num1Bin * num2Bin;
+            div: binResult = num1Bin / num2Bin;
             default: binResult = num1Bin + num2Bin;
         endcase
         res = 0;
@@ -30,6 +41,7 @@ always @(posedge exe)
                 if (res[15:12] >= 5) res[15:12] = res[15:12] + 3;
                 res = {res[14:0], binResult[13-i]};				//Shift one bit, and shift in proper bit from input 
             end
+        end
     end
 
 function [13:0] fromBCDtoBin (input [15:0] BCDnum);
