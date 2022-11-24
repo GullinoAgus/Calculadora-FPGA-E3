@@ -22,22 +22,23 @@ module mainFSB(
     reg [3:0]counter = 0;
     reg [2:0]curr_state = wait4num1;
 
-    assign Display = info2display;
-    assign ALUNum1 = num1;
-    assign ALUNum2 = num2;
-    assign ALUOp = operation;
-    assign state = counter;
+    assign Display = info2display;      // 4 BCD digits that go to the display
+    assign ALUNum1 = num1;               // number 2 ALU
+    assign ALUNum2 = num2;              // number 2 ALU
+    assign ALUOp = operation;           // operation 4 ALU
+    assign state = currKey;             // Testing
+
+    // States of the FSM
     parameter wait4num1 = 3'b000;
     parameter wait4num2 = 3'b001;
-    parameter wait4equal = 3'b010;
-    parameter showRes = 3'b011;
+    parameter showRes = 3'b010;
 
-    parameter equal = 4'b0101;
-    parameter AC = 4'b1101;
-    parameter plus = 4'b0011;
-    parameter minus = 4'b1011;
-    parameter mult = 4'b0111;
-    parameter div = 4'b1111;
+    parameter equal = 10;
+    parameter AC = 11;
+    parameter plus = 12;
+    parameter minus = 13;
+    parameter mult = 14;
+    parameter div = 15;
 
     always @(posedge kbEN) begin
         if (reset == 0) begin
@@ -46,7 +47,7 @@ module mainFSB(
             case (curr_state)
                 showRes: begin
                     case (currKey)
-                        4'b1000, 4'b0100, 4'b1100, 4'b0010, 4'b1010, 4'b0110, 4'b1110, 4'b0001, 4'b1001, 4'b0000: begin
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
                             num1 = 0;
                             num2 = 0;
                             num1 <= {num1, currKey};
@@ -67,25 +68,23 @@ module mainFSB(
                             num2 = 0;
                             end
                             
-                        4'b1000, 4'b0100, 4'b1100, 4'b0010, 4'b1010, 4'b0110, 4'b1110, 4'b0001, 4'b1001, 4'b0000:
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
                             num2 <= {num2, currKey};
                         
                     endcase
-                    
                 end
                 wait4num1:begin
                     
                     case (currKey)
-                        plus, minus, div, mult: begin
+                        plus, minus, mult, div: begin
                             operation <= currKey;
                             curr_state <= wait4num2;
-                            
                         end
-                        AC:
+                        AC: begin
                             num1 <= 0;
-                        4'b1000, 4'b0100, 4'b1100, 4'b0010, 4'b1010, 4'b0110, 4'b1110, 4'b0001, 4'b1001, 4'b0000: begin
-                            counter = counter + 1;
-                            num1 <= {currKey, num1};
+                        end
+                        1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
+                            num1 <= {num1, currKey};
                         end
                     endcase
                 end
@@ -100,7 +99,6 @@ module mainFSB(
             curr_state = wait4num1;
         end
         else begin
-
             case (curr_state)
                     wait4num1:
                         info2display = num1;

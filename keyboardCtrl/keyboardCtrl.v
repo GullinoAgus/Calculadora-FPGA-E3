@@ -30,7 +30,7 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
                         BCDKey = 3;
                     end
                     4'b1100:begin
-                        BCDKey = 4'b1100;
+                        BCDKey = 12;
                     end
                     4'b0001:begin
                         BCDKey = 4;
@@ -42,7 +42,7 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
                         BCDKey = 6;
                     end
                     4'b1101:begin
-                        BCDKey = 4'b1101;
+                        BCDKey = 13;
                     end
                     4'b0010:begin
                         BCDKey = 7;
@@ -54,19 +54,19 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
                         BCDKey = 9;
                     end 
                     4'b1110:begin
-                        BCDKey = 4'b1110;
+                        BCDKey = 14;
                     end
                     4'b0011:begin
-                        BCDKey = 4'b1011;
+                        BCDKey = 11;
                     end
                     4'b0111:begin
                         BCDKey = 0;
                     end
                     4'b1011:begin
-                        BCDKey = 4'b1010;
+                        BCDKey = 10;
                     end
                     4'b1111:begin
-                        BCDKey = 4'b1111;
+                        BCDKey = 15;
                     end
                     default: BCDKey = 0;
                 endcase
