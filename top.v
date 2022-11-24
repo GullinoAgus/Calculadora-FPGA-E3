@@ -27,7 +27,7 @@ module top
     output  wire        gpio_4,        // row2
     output  wire        gpio_44,        // row3
     input  wire        gpio_12,        // reset
-    output  wire        gpio_6,         // Reset
+    output  wire        gpio_6,         // Test
     output  wire        gpio_9,       // Test
     output  wire        gpio_11,        // Test
     output  wire        gpio_18,       // Test
@@ -106,7 +106,7 @@ keyboardCtrl kbctrl(.CLK(clkkb),
                     .BCDKey(pressedKey),
                     .KeyRead(readKey));
 
-fsm_bin_2bcd uut_bin2bcd( .clk(clk) ,
+fsm_bin_2bcd uut_bin2bcd( .clk(clk),
 								.resetn(~reset),
 								.en(1) ,
 								.in_4bcd(display) ,
@@ -117,21 +117,23 @@ fsm_bin_2bcd uut_bin2bcd( .clk(clk) ,
 bcd_2seg uut_bcd2seg (
 				.in_bcd(digit),
 			 	.seg(displaysticks));
-// ALU u_alu(
-//     .num1(num1), .num2(num2),     //Num 1 and 2 BCD
-//     .op(op),              //Operand
-//     .clk(clk),
-//     .res(res));       //Output BCD result);
-mainFSB fsb(.kbEN(readKey),
+wire exe;
+ALU u_alu(
+    .num1(num1), .num2(num2),     //Num 1 and 2 BCD
+    .op(op),              //Operand
+    .exe(exe),
+    .res(res),
+    .state(test[0:5]));       //Output BCD result);
+mainFSB fsb(.readKey(readKey),
     .pressedkey(pressedKey),
     .ALUres(res),
-    .ALUNum1(num1),
-    .ALUNum2(num2),
-    .ALUOp(op),
-    .Display(display),
+    .num1(num1),
+    .num2(num2),
+    .operation(op),
+    .executecalc(exe),
+    .info2display(display),
     .clk(clk),
-    .reset(reset),
-    .state(test[0:5]));
+    .reset(reset));
 
 
 endmodule

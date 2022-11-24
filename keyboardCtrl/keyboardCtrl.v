@@ -57,7 +57,8 @@ module keyboardCtrl ( CLK, keyboardfil, keyboardcol, RESET, BCDKey, KeyRead);
                         BCDKey = 14;
                     end
                     4'b0011:begin
-                        BCDKey = 11;
+                        BCDKey = 11;                KeyRead <= KeyPressed;
+
                     end
                     4'b0111:begin
                         BCDKey = 0;

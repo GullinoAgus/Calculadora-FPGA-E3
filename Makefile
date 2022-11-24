@@ -21,8 +21,8 @@ endif
 LIB_SRC = clkdivider.v ./ALU/ALU.v ./mainFSB/mainFSB.v DisplayCtrl/bcd_2seg.v DisplayCtrl/fsm_bin_to_bcd.v ./DisplayCtrl/DisplayCtrl.v ./keyboardCtrl/keyboardCtrl.v keyboardCtrl/keybToBCD.v
 SOURCES = top.v $(LIB_SRC)
 TBNAME = mainFSB_tb
-MODULE_TO_DRAW = ./keyboardCtrl/keyboardCtrl.v keyboardCtrl/keybToBCD.v
-SOURCES_TB = mainFSB/mainFSB_tb.v ./ALU/ALU.v ./mainFSB/mainFSB.v
+MODULE_TO_DRAW = ./mainFSB/mainFSB.v
+SOURCES_TB = mainFSB/mainFSB_tb.v ./mainFSB/mainFSB.v
 PCF = upduino.pcf
 #QUIET = -q
 WORK_FREQUENCY = 0.01#MHz
@@ -46,7 +46,7 @@ all: hardware.bin
 
 hardware.json: $(SOURCES)
 #	yosys -p "synth_ice40 -dsp -json hardware.json -abc9 -device u" C $(SOURCES)
-	$(YOSYS) -p "synth_ice40 -dsp -json hardware.json -abc9 -device u" $(QUIET) $(SOURCES)'
+	$(YOSYS) -p "synth_ice40 -dsp -json hardware.json" $(QUIET) $(SOURCES)'
 
 hardware.asc: $(PCF) hardware.json
 	$(ICE40) --up5k --package sg48 --json hardware.json --asc hardware.asc --pcf-allow-unconstrained --pcf $(PCF) --freq $(WORK_FREQUENCY) $(QUIET)'
