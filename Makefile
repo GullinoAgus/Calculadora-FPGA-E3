@@ -1,6 +1,9 @@
 # Set up the enviroment(Download from https://github.com/YosysHQ/oss-cad-suite-build)
 # On windows start.bat
 # make.exe should be on PATH
+# Set up the enviroment(Download from https:\\github.com\YosysHQ\oss-cad-suite-build)
+# On windows start.bat
+# make.exe should be on PATH
 # To verbose make all QUIET=
 ifeq ($(OS),Windows_NT)
     uname_S := Windows
@@ -9,23 +12,23 @@ else
 endif
 
 ifeq ($(uname_S), Windows)
-    APIOPKGFOLDER = 
+    APIOPKGFOLDER = C:\Users\Gonzalo\.apio
 endif
 ifeq ($(uname_S), Linux)
-    APIOPKGFOLDER = $${HOME}/.apio
+    APIOPKGFOLDER = $${HOME}\.apio
 endif
 ifeq ($(uname_S), Darwin)
-	APIOPKGFOLDER = $${HOME}/.apio
+	APIOPKGFOLDER = $${HOME}\.apio
 endif
 
-LIB_SRC = clkdivider.v ./ALU/ALU.v ./mainFSB/mainFSB.v DisplayCtrl/bcd_2seg.v DisplayCtrl/fsm_bin_to_bcd.v ./DisplayCtrl/DisplayCtrl.v ./keyboardCtrl/keyboardCtrl.v keyboardCtrl/keybToBCD.v
+LIB_SRC = clkdivider.v .\ALU\ALU.v .\mainFSB\mainFSB.v DisplayCtrl\bcd_2seg.v DisplayCtrl\fsm_bin_to_bcd.v .\DisplayCtrl\DisplayCtrl.v .\keyboardCtrl\keyboardCtrl.v keyboardCtrl\keybToBCD.v
 SOURCES = top.v $(LIB_SRC)
 TBNAME = mainFSB_tb
-MODULE_TO_DRAW = ./keyboardCtrl/keyboardCtrl.v keyboardCtrl/keybToBCD.v
-SOURCES_TB = mainFSB/mainFSB_tb.v ./ALU/ALU.v ./mainFSB/mainFSB.v
+MODULE_TO_DRAW = .\keyboardCtrl\keyboardCtrl.v keyboardCtrl\keybToBCD.v
+SOURCES_TB = mainFSB\mainFSB_tb.v .\ALU\ALU.v .\mainFSB\mainFSB.v
 PCF = upduino.pcf
 #QUIET = -q
-WORK_FREQUENCY = 0.01#MHz
+WORK_FREQUENCY = 0.01 #MHz
 IVERILOG = apio raw 'iverilog
 YOSYS = apio raw 'yosys
 ICE40 = apio raw 'nextpnr-ice40
@@ -35,7 +38,7 @@ ICETIME = apio raw 'icetime
 VVP = apio raw 'vvp
 
 ifdef ComSpec
-    RM=del /F /Q
+    RM=del \F \Q
 	CP=copy
 else
     RM=rm -f
@@ -61,7 +64,7 @@ prog: hardware.bin
 	$(ICEPROG) -d i:0x0403:0x6014 hardware.bin'
 
 sim: $(SOURCES)
-	$(IVERILOG) -B "$(APIOPKGFOLDER)/packages/tools-oss-cad-suite/lib/ivl" -o $(TBNAME).out -D VCD_OUTPUT=$(TBNAME) -D NO_ICE40_DEFAULT_ASSIGNMENTS "$(APIOPKGFOLDER)/packages/tools-oss-cad-suite/share/yosys/ice40/cells_sim.v" $(SOURCES_TB)'
+	$(IVERILOG) -B "$(APIOPKGFOLDER)\packages\tools-oss-cad-suite\lib\ivl" -o $(TBNAME).out -D VCD_OUTPUT=$(TBNAME) -D NO_ICE40_DEFAULT_ASSIGNMENTS "$(APIOPKGFOLDER)\packages\tools-oss-cad-suite\share\yosys\ice40\cells_sim.v" $(SOURCES_TB)'
 	$(VVP) $(TBNAME).out'
 
 show: $(SOURCES)
@@ -69,14 +72,14 @@ show: $(SOURCES)
 	netlistsvg output.json -o hardware.svg
 
 verify:
-	$(IVERILOG) -B "$(APIOPKGFOLDER)/packages/tools-oss-cad-suite/lib/ivl" -o hardware.out -D VCD_OUTPUT= -D NO_ICE40_DEFAULT_ASSIGNMENTS "$(APIOPKGFOLDER)/packages/tools-oss-cad-suite/share/yosys/ice40/cells_sim.v" $(SOURCES)'
+	$(IVERILOG) -B "$(APIOPKGFOLDER)\packages\tools-oss-cad-suite\lib\ivl" -o hardware.out -D VCD_OUTPUT= -D NO_ICE40_DEFAULT_ASSIGNMENTS "$(APIOPKGFOLDER)\packages\tools-oss-cad-suite\share\yosys\ice40\cells_sim.v" $(SOURCES)'
 	
 iceprog: hardware.bin
 	$(ICEPROG) hardware.bin'
 
 install:
-	$(RM) ../$(LIB_SRC)
-	$(CP) $(LIB_SRC) ../
+	$(RM) ..\$(LIB_SRC)
+	$(CP) $(LIB_SRC) ..\
 
 clean:
 	$(RM) hardware.json hardware.asc hardware.bin abc.history *.out *.vcd
