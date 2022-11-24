@@ -99,6 +99,13 @@ module mainFSB(
                     num2 = 0;
                     nxt_state = wait4num1;
                 end
+                
+                if (currKey == AC) begin
+                    num1 = 0;
+                    num2 = 0;
+                    nxt_state = wait4num1;
+                end
+
                 if (currKey > AC) begin         // si se presiona una operacion, se concatena y s econtinua operando sobre resultado
                     num1 = ALUres;
                     num2 = 0;
