@@ -17,14 +17,14 @@ module mainFSB(
     // States of the FSM
     parameter wait4num1 = 2'b00;
     parameter wait4num2 = 2'b01;
-    parameter showRes = 2'b10;
+    parameter showRes = 2'b11;
 
-    parameter equal = 10;
-    parameter AC = 11;
-    parameter plus = 12;
-    parameter minus = 13;
-    parameter mult = 14;
-    parameter div = 15;
+    parameter equal = 4'd10;
+    parameter AC = 4'd11;
+    parameter plus = 4'd12;
+    parameter minus = 4'd13;
+    parameter mult = 4'd14;
+    parameter div = 4'd15;
 
     reg [3:0]operation = 4'b0000;
     reg [15:0]num1 = 16'b000000000000;
@@ -40,59 +40,97 @@ module mainFSB(
     assign ALUNum2 = num2;              // number 2 ALU
     assign ALUOp = operation;           // operation 4 ALU
 
-    assign state = currKey;             // Testing
+    assign state = { currKey[3:0]};             // Testing
 
 
     always @(posedge kbEN) begin
         // if (reset == 0) begin
 
-            currKey = pressedkey;
-            case (curr_state)
-                showRes: begin
-                    case (currKey)
-                        1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
-                            num1 = 0;
-                            num2 = 0;
-                            num1 <= {num1, currKey};
-                            curr_state <= wait4num1;
-                        end
-                    endcase
-                end
-                wait4num2: begin
-                    case (currKey)
-                        equal: begin
-                            curr_state <= showRes;                        
-                            end
-                        AC: begin
-                            if (!num2) begin
-                                num2 = 0;
-                                num1 = 0;
-                            end
-                            num2 = 0;
-                            end
-                            
-                        1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
-                            num2 <= {num2, currKey};
-                        
-                    endcase
-                end
-                wait4num1:begin
-                    
-                    case (currKey)
-                        plus, minus, mult, div: begin
-                            operation <= currKey;
-                            curr_state <= wait4num2;
-                        end
-                        AC: begin
-                            num1 <= 0;
-                        end
-                        1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
-                            num1 <= {num1, currKey};
-                        end
-                    endcase
+        currKey[3:0] = pressedkey[3:0];
+        if (curr_state == showRes)begin
+                // case (currKey)
+                //     1, 2, 3, 4, 5, 6, 7, 8, 9, 0: begin
+                //         num1 = 0;
+                //         num2 = 0;
+                //         num1 <= {12'd0, currKey};
+                //         curr_state = wait4num1;
+                //     end
+                // endcase
+                if(currKey[3:0] < 4'd10)begin
+                    num1 = 0;
+                    num2 = 0;
+                    num2 <= {num2[11:0], currKey[3:0]};
+                    curr_state <= wait4num1;
 
                 end
-            endcase
+        end
+        else if (curr_state == wait4num2) begin
+                // case (currKey)
+                //     equal: begin
+                //         curr_state = showRes;                        
+                //         end
+                //     AC: begin
+                //         if (!num2) begin
+                //             num2 = 0;
+                //             num1 = 0;
+                //         end
+                //         num2 = 0;
+                //         end
+                        
+                //     1, 2, 3, 4, 5, 6, 7, 8, 9, 0:
+                //         num2 = {num2[11:0], currKey};
+                    
+                // endcase
+            if(currKey[3:0] < 4'd10)begin
+                num2 <= {num2[11:0], currKey[3:0]};
+
+            end
+            else if (currKey[3:0] == 4'd11) begin
+                if (!num2) begin
+                    num2 = 0;
+                    num1 = 0;
+                end
+                num2 = 0;
+
+            end
+            else if (currKey[3:0] == 4'd10) begin
+                curr_state <= showRes;
+            end
+            else if (currKey[3:0] >= 4'd12) counter = counter;
+            else counter = counter;
+        end
+        else if (curr_state == wait4num1) begin
+            
+            // case (currKey)
+            //     4'd0, 4'd1, 4'd2, 4'd3, 4'd4, 4'd5, 4'd6, 4'd7, 4'd8, 4'd9: begin
+            //         num1 = {num1[11:0], currKey};
+            //         counter = counter+1;
+            //     end
+            //     4'd12, 4'd13, 4'd14, 4'd15: begin
+            //         operation = currKey;
+            //         curr_state = wait4num2;
+            //     end
+            //     AC: begin
+            //         num1 = 16'd0;
+            //     end
+                
+            //     default: counter = counter+1;
+            // endcase
+            if(currKey[3:0] < 4'd10)begin
+                num1 <= {num1[11:0], currKey[3:0]};
+            end
+            else if (currKey[3:0] == 4'd11) begin
+                num1 <= 16'd0;
+
+            end
+            else if (currKey[3:0] >= 4'd12) begin
+                operation <= currKey[3:0];
+                curr_state <= wait4num2;
+
+            end
+            else counter = counter;
+
+        end
         // end
         // else begin
             

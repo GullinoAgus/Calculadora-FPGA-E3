@@ -117,11 +117,11 @@ fsm_bin_2bcd uut_bin2bcd( .clk(clk) ,
 bcd_2seg uut_bcd2seg (
 				.in_bcd(digit),
 			 	.seg(displaysticks));
-ALU u_alu(
-    .num1(num1), .num2(num2),     //Num 1 and 2 BCD
-    .op(op),              //Operand
-    .clk(clk),
-    .res(res));       //Output BCD result);
+// ALU u_alu(
+//     .num1(num1), .num2(num2),     //Num 1 and 2 BCD
+//     .op(op),              //Operand
+//     .clk(clk),
+//     .res(res));       //Output BCD result);
 mainFSB fsb(.kbEN(readKey),
     .pressedkey(pressedKey),
     .ALUres(res),
