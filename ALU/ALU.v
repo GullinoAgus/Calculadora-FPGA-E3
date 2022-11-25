@@ -15,7 +15,7 @@ localparam div = 4'd15;
 
 wire[13:0] num1Bin, num2Bin;
 integer i, binResult;
-assign num1Bin = fromBCDtoBin(num1); //assign make connections between inputs and outputs
+assign num1Bin = fromBCDtoBin(num1); //assign connections between inputs and outputs
 assign num2Bin = fromBCDtoBin(num2);
 
 always @(posedge exe)

@@ -47,73 +47,73 @@ module mainFSB(
 
         //State updater
         case (curr_state)
-            wait4num1: info2display = num1; // En estado inicial se muestra el numero 1
+            wait4num1: info2display = num1; // At initial state it shows this register
 
-            wait4num2: info2display = num2; // En estado de segundo numero se muestra el numero 2
+            wait4num2: info2display = num2; // Second state showing second operand
 
-            calculate:begin                 // Se manda flanco a la ALU para q calcule el resultado
+            calculate:begin                 // Edge to activate ALU
                 executecalc = 1;
                 nxt_state = showRes;
             end
             
-            showRes: info2display = ALUres; // Muestro el resultado que calculo la ALU
+            showRes: info2display = ALUres; // State showing result from ALU
 
         endcase
-        if ((!readKey) && (!keyreleased)) begin // Cuando se suelta la tecla luego de presionarla
+        if ((!readKey) && (!keyreleased)) begin // Key press latch
             
-            if(curr_state == wait4num1)begin    //Estado inicial esperando primer numero 
-                if (currKey < equal) begin      // Si se presiono un numero se concatena al q se muestra
+            if(curr_state == wait4num1)begin    // Initial State 
+                if (currKey < equal) begin      // Each number pressed gets concatenated into num1 register
                     num1 = {num1[11:0], currKey};
                 end
 
-                if (currKey > AC)begin          // Si se presiono un operador se guarda y se pasa al proximo estado
+                if (currKey > AC)begin          // Any operator pressed, save operation
                     operation = currKey;
                     nxt_state = wait4num2;
                 end
 
-                if (currKey == AC) begin        // Si se presiono AC limpio el numero 1
+                if (currKey == AC) begin        // Clear button pressed
                     num1 = 0;
                 end
             end
-            if(curr_state == wait4num2)begin    // Estado de espera para ingreso de numero 2
+            if(curr_state == wait4num2)begin    // Second operand state
                 
-                if (currKey < equal) begin      // Si se ingreso un numero se concatena
+                if (currKey < equal) begin      // new number gets concatenated
                     num2 = {num2[11:0], currKey};
                 end
                 
-                if (currKey == equal)begin      // Si se presiona igual se manda la ALU a calcular
+                if (currKey == equal)begin      // If equal is pressed, calculate the result and show it
                     nxt_state = calculate;
                     executecalc = 0;
                 end
                 
-                if (currKey == AC) begin        // AC borra todo
+                if (currKey == AC) begin        // clear key pressed
                     num2 = 0;
                 end
 
             end
 
-            if(curr_state == showRes)begin      // Estado donde se muestra el resultado en display
+            if(curr_state == showRes)begin      // State showing the result
                 
-                if (currKey < equal) begin    // Si se ingresa otro numero se pasa al estado inicial con todo los regs limpios
+                if (currKey < equal) begin    // If another number is pressed, go to initial state
                     num1 = {12'd0, currKey};
                     num2 = 0;
                     nxt_state = wait4num1;
                 end
                 
-                if (currKey == AC) begin
+                if (currKey == AC) begin      // if clear is pressed go to initial state
                     num1 = 0;
                     num2 = 0;
                     nxt_state = wait4num1;
                 end
 
-                if (currKey > AC) begin         // si se presiona una operacion, se concatena y s econtinua operando sobre resultado
+                if (currKey > AC) begin         // Operate over the result
                     num1 = ALUres;
                     num2 = 0;
                     operation = currKey;
                     nxt_state = wait4num2;
                 end
             end
-            keyreleased = 1'b1;
+            keyreleased = 1'b1;                 // release latch from key
         end
 
     end
